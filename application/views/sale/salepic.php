@@ -4479,9 +4479,6 @@ if($_SESSION['owner_vat_status']!='0'){
                             </h3>
                         </center>
 
-
-
-
                         <!-- ============== update show list sale last and show delete button in salepic ============================-->
 
                         <?php
