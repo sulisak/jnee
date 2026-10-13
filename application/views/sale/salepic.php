@@ -147,24 +147,7 @@ else {
                         <a href="<?php echo $base_url;?>/mycustomer" class="btn btn-warning btn-lg"
                             onclick="window.open(this.href, 'windowName', 'width=1300, height=700, left=24, top=24, scrollbars, resizable'); return false;">ເພີ່ມລູກຄ້າ</a>
                     </div>
-                    <!-- add new customer -->
 
-
-                    <!-- <div class="form-group">
-<button ng-click="Refresh()" class="btn btn-default btn-lg" placeholder="" title="<?=$lang_refresh?>"><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span></button>
-</div> -->
-
-                    <!-- <div class="form-group" style="float: left;"> -->
-
-
-                    <!-- <a href="<?php echo $base_url;?>/home/showcus2mer" target="_blank" class="btn btn-warning btn-lg"> ກົດຈໍລູກຄ້າ</a> -->
-
-
-
-                    <!-- </div> -->
-
-
-                    <!-- <p></p> -->
 
                     <a href="<?php echo $base_url;?>/sale/product_return" class="btn btn-default btn-lg"
                         onclick="window.open(this.href, 'windowName', 'width=1300, height=700, left=24, top=24, scrollbars, resizable'); return false;"><?=$lang_productreturn?></a>
@@ -180,19 +163,12 @@ else {
 
                 </form>
 
-
-
                 </form>
 
                 <input type="hidden" name="" ng-model="customer_id">
 
 
-
-
             </div>
-
-
-
 
 
             <div style="height: 760px;overflow: auto;">
