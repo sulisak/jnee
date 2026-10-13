@@ -7488,9 +7488,6 @@ if($_SESSION['owner_vat_status']=='0' || $_SESSION['owner_vat_status']=='1'){
                                     //end ค้นหาสินค้าทั้งหมด
 
 
-
-
-
                                     //start ค้นหาลูกค้า
                                     $scope.csearchtextarray = [];
                                     $scope.csearchtextarray2 = [];
@@ -7509,9 +7506,6 @@ if($_SESSION['owner_vat_status']=='0' || $_SESSION['owner_vat_status']=='1'){
                                         }, 1000);
                                     }
                                     //end ค้นหาลูกค้า
-
-
-
 
 
                                     $scope.Getonemini = function(x, activeSaleType) {
@@ -7595,7 +7589,6 @@ if($_SESSION['owner_vat_status']=='0' || $_SESSION['owner_vat_status']=='1'){
 
 
 
-
                                     $scope.Getonemini_order = function(x) {
                                         $http.post("Salelist/Getone", {
                                             sale_runno: x.sale_runno
@@ -7640,8 +7633,6 @@ if($_SESSION['owner_vat_status']=='0' || $_SESSION['owner_vat_status']=='1'){
                                     };
 
 
-
-
                                     $scope.Opengetmoneymodal = function() {
                                         $('#Opengetmoneymodal').modal('show');
                                         $scope.morepaykey = '0';
@@ -7660,9 +7651,6 @@ if($_SESSION['owner_vat_status']=='0' || $_SESSION['owner_vat_status']=='1'){
                                         });
 
                                     };
-
-
-
 
                                     $scope.Summarysale_change = function() {
                                         if ($scope.discount_last_percent != 0) {
