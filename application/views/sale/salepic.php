@@ -4459,8 +4459,6 @@ if($_SESSION['owner_vat_status']!='0'){
 
             </div>
 
-
-
             <?php if($_SESSION['user_type'] != '0'){?>
             <div class="col-xs-12 col-sm-12 col-md-12">
                 <hr />
