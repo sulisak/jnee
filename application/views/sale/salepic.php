@@ -4479,14 +4479,11 @@ if($_SESSION['owner_vat_status']!='0'){
                             </h3>
                         </center>
 
-
-
-
                         <!-- ============== update show list sale last and show delete button in salepic ============================-->
 
                         <?php
-if($_SESSION['user_type']=='4'){
-?>
+                        if($_SESSION['user_type']=='4'){
+                        ?>
                         <div class="col-xs-12 col-sm-12 col-md-12">
                             <hr />
                         </div>
@@ -4503,14 +4500,13 @@ if($_SESSION['user_type']=='4'){
                                         <?=$lang_showdel?>
                                     </div>
 
+                                    <?php
+                                    }
+                                    ?>
 
                                     <?php
-}
-?>
-
-                                    <?php
-if($_SESSION['user_type']=='1'){
-?>
+                                    if($_SESSION['user_type']=='1'){
+                                    ?>
                                     <div class="col-xs-12 col-sm-12 col-md-12">
                                         <hr />
                                     </div>
@@ -4521,38 +4517,22 @@ if($_SESSION['user_type']=='1'){
 
                                                 <?=$lang_lastsale?>
 
-
-
-
+                                                <?php
+                                                }
+                                                ?>
 
                                                 <?php
-}
-?>
-
-                                                <?php
-if($_SESSION['user_type']=='0' || '2' || '3'){
-?>
+                                                if($_SESSION['user_type']=='0' || '2' || '3'){
+                                                ?>
                                                 <div class="col-xs-12 col-sm-12 col-md-12">
                                                     <hr />
                                                 </div>
 
-
-
-
                                                 <?php
-}
-?>
-
-
-
-
-
+                                                }
+                                                ?>
 
                                                 <!-- ============== update show list sale last and show delete button in salepic ======================-->
-
-
-
-
 
                                                 <form class="form-inline">
 
@@ -4581,9 +4561,6 @@ if($_SESSION['user_type']=='0' || '2' || '3'){
 
                                                 </form>
                                                 <br />
-
-
-
 
                                                 <table class="table table-hover table-bordered">
                                                     <thead>
@@ -4670,18 +4647,16 @@ if($_SESSION['user_type']=='0' || '2' || '3'){
 
 
                                                             <?php
-if($_SESSION['owner_vat_status']=='2'){
-?>
+                                                            if($_SESSION['owner_vat_status']=='2'){
+                                                            ?>
                                                             <td align="right">{{x.sumsale_price * (x.vat/100) | number}}
                                                             </td>
                                                             <td align="right">
                                                                 {{ParsefloatFunc(x.sumsale_price)  * (ParsefloatFunc(x.vat)/100) + ParsefloatFunc(x.sumsale_price) | number}}
                                                             </td>
                                                             <?php
-}
-?>
-
-
+                                                            }
+                                                            ?>
 
                                                             <td align="right">{{x.discount_last | number}}</td>
                                                             <td align="right">
@@ -4718,11 +4693,6 @@ if($_SESSION['owner_vat_status']=='2'){
                                                                     class="btn btn-sm btn-danger"
                                                                     ng-click="Deletelist_modal(x)" id="delbut{{x.ID}}">
                                                                     <?=$lang_delete?> {{x.sale_runno}}</button>
-
-
-
-
-
 
                                                             </td>
                                                         </tr>
@@ -4763,14 +4733,7 @@ if($_SESSION['owner_vat_status']=='2'){
                                     <?php } ?>
 
 
-
-
-
-
                                 </div>
-
-
-
 
                                 <script>
                                 var app = angular.module('firstapp', []);
@@ -4817,12 +4780,6 @@ if($_SESSION['owner_vat_status']=='2'){
 
                                     });
 
-
-
-
-
-
-
                                     $scope.getpaytype = function() {
 
                                         $http.get('<?php echo $base_url;?>/salesetting/pay_type/get')
@@ -4866,19 +4823,13 @@ if($_SESSION['owner_vat_status']=='2'){
 
                                         }
 
-
-
-
                                         if (event.keyCode == 27) {
                                             console.log('esc was pressed');
 
                                             $('#Modalcannotfindproduct').modal('hide');
 
 
-
                                         }
-
-
 
 
                                         if (event.keyCode == 13) {
@@ -4944,12 +4895,6 @@ if($_SESSION['owner_vat_status']=='2'){
                                     });
 
 
-
-
-
-
-
-
                                     <?php
 if($_SESSION['owner_vat_status']=='0' || $_SESSION['owner_vat_status']=='1'){
 ?>
@@ -4965,9 +4910,6 @@ if($_SESSION['owner_vat_status']=='0' || $_SESSION['owner_vat_status']=='1'){
                                     <?php
 }
 ?>
-
-
-
 
 
                                     $scope.Addproductrank = function() {
@@ -5111,12 +5053,6 @@ if($_SESSION['owner_vat_status']=='0' || $_SESSION['owner_vat_status']=='1'){
                                     };
 
 
-
-
-
-
-
-
                                     $scope.Getnumtoprice_2 = function(x) {
 
                                         $http.post(
@@ -5174,20 +5110,11 @@ if($_SESSION['owner_vat_status']=='0' || $_SESSION['owner_vat_status']=='1'){
                                                         parseFloat($scope.discount_last);
                                                 }
 
-
-
                                             }
-
-
 
 
                                         });
                                     };
-
-
-
-
-
 
 
                                     $scope.Getnumtoprice_3 = function(x) {
@@ -5211,14 +5138,6 @@ if($_SESSION['owner_vat_status']=='0' || $_SESSION['owner_vat_status']=='1'){
 
                                         });
                                     };
-
-
-
-
-
-
-
-
 
 
                                     $scope.Delproductrank = function() {
@@ -5265,9 +5184,6 @@ if($_SESSION['owner_vat_status']=='0' || $_SESSION['owner_vat_status']=='1'){
 
                                     <?php } ?>
 
-
-
-
                                     $scope.Openshiftnow = function() {
                                         if (isNaN($scope.shift_money_start) == true) {
                                             toastr.warning('<?php echo $lang_sp_124;?>');
@@ -5286,11 +5202,6 @@ if($_SESSION['owner_vat_status']=='0' || $_SESSION['owner_vat_status']=='1'){
 
                                     };
 
-
-
-
-
-
                                     $scope.Getround = function() {
                                         $http.post(
                                             "<?php echo $base_url;?>/salesetting/round_setting/getround", {}
@@ -5299,9 +5210,6 @@ if($_SESSION['owner_vat_status']=='0' || $_SESSION['owner_vat_status']=='1'){
                                         });
                                     };
                                     $scope.Getround();
-
-
-
 
                                     $scope.Opencashdrawer = function() {
                                         $.ajax({
@@ -5344,10 +5252,6 @@ if($_SESSION['owner_vat_status']=='0' || $_SESSION['owner_vat_status']=='1'){
                                     };
 
 
-
-
-
-
                                     $scope.Opencashnow = function() {
 
                                         $.ajax({
@@ -5365,12 +5269,6 @@ if($_SESSION['owner_vat_status']=='0' || $_SESSION['owner_vat_status']=='1'){
 
 
                                     };
-
-
-
-
-
-
 
 
                                     $scope.Getdiscountfrombuy = function() {
@@ -5414,11 +5312,6 @@ if($_SESSION['owner_vat_status']=='0' || $_SESSION['owner_vat_status']=='1'){
                                             });
                                     };
                                     $scope.Get_stock_rule();
-
-
-
-
-
 
                                     $scope.Discount_lastfunc = function() {
 
@@ -5484,10 +5377,6 @@ if($_SESSION['owner_vat_status']=='0' || $_SESSION['owner_vat_status']=='1'){
                                     };
 
 
-
-
-
-
                                     $scope.Closeshiftnowconfirm = function() {
 
                                         if (isNaN($scope.shift_money_end) == true) {
@@ -5506,9 +5395,6 @@ if($_SESSION['owner_vat_status']=='0' || $_SESSION['owner_vat_status']=='1'){
 
                                     };
 
-
-
-
                                     $scope.Getpotmodal = function(x, index) {
 
                                         $('#getpotmodal').modal('show');
@@ -5525,14 +5411,7 @@ if($_SESSION['owner_vat_status']=='0' || $_SESSION['owner_vat_status']=='1'){
                                         });
 
 
-
-
-
-
                                     }
-
-
-
 
 
                                     $scope.getcategory = function() {
@@ -5557,8 +5436,6 @@ if($_SESSION['owner_vat_status']=='0' || $_SESSION['owner_vat_status']=='1'){
                                             });
                                     };
                                     $scope.getpotall();
-
-
 
                                     $scope.sctm = true;
                                     $scope.Searchcustomer = function() {
@@ -5640,36 +5517,6 @@ if($_SESSION['owner_vat_status']=='0' || $_SESSION['owner_vat_status']=='1'){
                                     };
 
 
-
-                                    // $scope.printDivfull = function(x) {
-                                    //     // If x is passed directly, use it; otherwise fall back safely
-                                    //     var selectedItem = x || ($scope.list && $scope.list.length > 0 ?
-                                    //         $scope.list[0] : null);
-
-                                    //     if (selectedItem) {
-                                    //         $scope.Getone(selectedItem);
-                                    //     }
-
-                                    //     $('#Openonemini').modal('hide');
-                                    //     $('#Openone').modal('show');
-                                    // };
-                                    //  update 12102026 ----------------
-                                    // $scope.printDivfull = function(x, sale_type) {
-                                    //     // If x is passed directly, use it; otherwise fall back safely
-                                    //     var activeSaleType = sale_type || $scope.sale_type;
-                                    //     var selectedItem = x || ($scope.list && $scope.list.length > 0 ?
-                                    //         $scope.list[0] : null);
-
-                                    //     if (selectedItem) {
-                                    //         $scope.Getone(selectedItem, activeSaleType);
-                                    //     }
-
-                                    //     $('#Openonemini').modal('hide');
-                                    //     $('#Openone').modal('show');
-                                    // };
-                                    //   update 12102026 ----------------
-
-
                                     $scope.printDivfullsend = function(x) {
                                         $('#Openonesend').modal('show');
 
@@ -5686,8 +5533,6 @@ if($_SESSION['owner_vat_status']=='0' || $_SESSION['owner_vat_status']=='1'){
                                         $scope.lung = x;
                                     };
 
-
-
                                     $scope.getcashierprinterip = function() {
 
                                         $http.get(
@@ -5703,12 +5548,6 @@ if($_SESSION['owner_vat_status']=='0' || $_SESSION['owner_vat_status']=='1'){
                                     };
                                     $scope.getcashierprinterip();
 
-
-
-
-
-
-
                                     $scope.Showproduct_pointmodal = function() {
                                         $('#Showproduct_pointmodal').modal('show');
                                         $http.get('<?php echo $base_url;?>/salesetting/Product_point/get')
@@ -5718,14 +5557,6 @@ if($_SESSION['owner_vat_status']=='0' || $_SESSION['owner_vat_status']=='1'){
                                             });
 
                                     }
-
-
-
-
-
-
-
-
 
 
                                     $scope.Openbillcloseday = function() {
@@ -5866,8 +5697,6 @@ if($_SESSION['owner_vat_status']=='0' || $_SESSION['owner_vat_status']=='1'){
                                                 // $("#previewImage").append(canvas);
                                                 getCanvas = canvas;
 
-
-
                                                 var imgageData = getCanvas.toDataURL(
                                                     "image/png");
                                                 // Now browser starts downloading it instead of just showing it
@@ -5945,8 +5774,6 @@ if($_SESSION['owner_vat_status']=='0' || $_SESSION['owner_vat_status']=='1'){
                                     });
 
 
-
-
                                     $scope.printDivmini = function(x) {
                                         // Priority: Record's own sale_type -> dropdown selection -> localStorage -> default '1'
                                         var selectedItem = x || ($scope.list && $scope.list.length > 0 ?
@@ -5964,7 +5791,6 @@ if($_SESSION['owner_vat_status']=='0' || $_SESSION['owner_vat_status']=='1'){
                                             $scope.Getonemini(selectedItem, activeSaleType);
                                         }
                                     };
-
 
                                     $scope.printDivminiip = function(x) {
                                         var selectedItem = x || ($scope.list && $scope.list.length > 0 ?
@@ -5985,19 +5811,12 @@ if($_SESSION['owner_vat_status']=='0' || $_SESSION['owner_vat_status']=='1'){
 
                                     // update 12102026 ----------------
 
-
-
                                     $scope.printDivmini_order = function() {
                                         $('#Openonemini_order').modal('show');
                                         $('#Openone').modal('hide');
                                         $scope.Getonemini_order($scope.list[0]);
 
-
                                     };
-
-
-
-
 
 
                                     $scope.printDivminiip2 = function(x) {
@@ -6011,9 +5830,6 @@ if($_SESSION['owner_vat_status']=='0' || $_SESSION['owner_vat_status']=='1'){
                                     };
 
 
-
-
-
                                     $scope.printDivmini2 = function(x) {
                                         $('#Openonemini').modal('show');
                                         //$('#Openonemini').css('visibility','');
@@ -6024,10 +5840,6 @@ if($_SESSION['owner_vat_status']=='0' || $_SESSION['owner_vat_status']=='1'){
                                         }, 1000);
 
                                     };
-
-
-
-
 
                                     $scope.Openfull = function() {
                                         $('#Openfull').modal({
@@ -6065,8 +5877,6 @@ if($_SESSION['owner_vat_status']=='0' || $_SESSION['owner_vat_status']=='1'){
                                     };
 
 
-
-
                                     $scope.Savethiscuscourse = function(x) {
                                         $http.post("Salepage/Savethiscuscourse", {
                                             cus_id: x.cus_id,
@@ -6079,13 +5889,6 @@ if($_SESSION['owner_vat_status']=='0' || $_SESSION['owner_vat_status']=='1'){
                                             toastr.success('<?php echo $lang_sp_125;?>');
                                         });
                                     };
-
-
-
-
-
-
-
 
 
                                     $scope.customer_group_discountpercent = false;
@@ -6117,13 +5920,7 @@ if($_SESSION['owner_vat_status']=='0' || $_SESSION['owner_vat_status']=='1'){
 
                                         });
 
-
-
-
                                     };
-
-
-
 
 
                                     $scope.Refresh = function() {
@@ -6222,11 +6019,6 @@ if($_SESSION['owner_vat_status']=='0' || $_SESSION['owner_vat_status']=='1'){
                                         });
                                     };
 
-
-
-
-
-
                                     $scope.Savepopup_num = function() {
                                         if ($scope.popup_pricenum == '3') {
                                             numnum = $scope.popup_num_num / $scope.product_price_popupnum;
@@ -6254,13 +6046,6 @@ if($_SESSION['owner_vat_status']=='0' || $_SESSION['owner_vat_status']=='1'){
                                         });
 
                                     }
-
-
-
-
-
-
-
 
                                     $scope.Addpushproductcode = function(product_code, x) {
                                         $scope.yingbarcode = true;
@@ -6323,9 +6108,6 @@ if($_SESSION['owner_vat_status']=='0' || $_SESSION['owner_vat_status']=='1'){
                                             } else {
                                                 $scope.sn_code = '';
                                             }
-
-
-
 
                                             $scope.Findproductone = data.list;
                                             data = data.list;
@@ -6509,24 +6291,10 @@ if($_SESSION['owner_vat_status']=='0' || $_SESSION['owner_vat_status']=='1'){
                                                         }
 
 
-
-
-
-
-
-
                                                     }
 
 
-
-
-
-
-
                                                 }
-
-
-
 
 
                                                 $scope.cannotfindproduct = false;
@@ -6541,10 +6309,6 @@ if($_SESSION['owner_vat_status']=='0' || $_SESSION['owner_vat_status']=='1'){
                                     };
 
 
-
-
-
-
                                     $scope.getname_of_price = function() {
 
                                         $http.get('<?php echo $base_url;?>/salesetting/name_of_price/get')
@@ -6554,10 +6318,6 @@ if($_SESSION['owner_vat_status']=='0' || $_SESSION['owner_vat_status']=='1'){
                                             });
                                     };
                                     $scope.getname_of_price();
-
-
-
-
 
                                     $scope.Updateproductnumber = function(x, index) {
                                         $scope.listsaleindex = index;
@@ -6591,9 +6351,6 @@ if($_SESSION['owner_vat_status']=='0' || $_SESSION['owner_vat_status']=='1'){
                                             $scope.Getnumtoprice_2(x.product_code);
                                         });
                                     }
-
-
-
 
 
                                     $scope.Updateproductprice = function(x) {
@@ -6667,10 +6424,6 @@ if($_SESSION['owner_vat_status']=='0' || $_SESSION['owner_vat_status']=='1'){
                                         }
 
                                     }
-
-
-
-
 
 
                                     $scope.Deletepush = function(x) {
@@ -6884,10 +6637,6 @@ if($_SESSION['owner_vat_status']=='0' || $_SESSION['owner_vat_status']=='1'){
                                         return total;
                                     };
 
-
-
-
-
                                     $scope.digits_count = function(n) {
                                         var count = 0;
                                         if (n >= 1) ++count;
@@ -6899,10 +6648,6 @@ if($_SESSION['owner_vat_status']=='0' || $_SESSION['owner_vat_status']=='1'){
 
                                         return count;
                                     }
-
-
-
-
 
 
                                     $scope.Sumsaleprice = function() {
@@ -6970,17 +6715,6 @@ if($_SESSION['owner_vat_status']=='0' || $_SESSION['owner_vat_status']=='1'){
 
                                         return sum;
                                     };
-
-
-
-
-
-
-
-
-
-
-
 
 
                                     $scope.Sumsalepricevat = function() {
@@ -7242,13 +6976,6 @@ if($_SESSION['owner_vat_status']=='0' || $_SESSION['owner_vat_status']=='1'){
                                     };
 
 
-
-
-
-
-
-
-
                                     $scope.Showquotationlist = function() {
 
                                         $http.post("Salepage/getquotation", {}).success(function(data) {
@@ -7257,14 +6984,6 @@ if($_SESSION['owner_vat_status']=='0' || $_SESSION['owner_vat_status']=='1'){
                                         });
 
                                     };
-
-
-
-
-
-
-
-
 
 
 
@@ -7488,9 +7207,6 @@ if($_SESSION['owner_vat_status']=='0' || $_SESSION['owner_vat_status']=='1'){
                                     //end ค้นหาสินค้าทั้งหมด
 
 
-
-
-
                                     //start ค้นหาลูกค้า
                                     $scope.csearchtextarray = [];
                                     $scope.csearchtextarray2 = [];
@@ -7509,9 +7225,6 @@ if($_SESSION['owner_vat_status']=='0' || $_SESSION['owner_vat_status']=='1'){
                                         }, 1000);
                                     }
                                     //end ค้นหาลูกค้า
-
-
-
 
 
                                     $scope.Getonemini = function(x, activeSaleType) {
@@ -7595,7 +7308,6 @@ if($_SESSION['owner_vat_status']=='0' || $_SESSION['owner_vat_status']=='1'){
 
 
 
-
                                     $scope.Getonemini_order = function(x) {
                                         $http.post("Salelist/Getone", {
                                             sale_runno: x.sale_runno
@@ -7640,8 +7352,6 @@ if($_SESSION['owner_vat_status']=='0' || $_SESSION['owner_vat_status']=='1'){
                                     };
 
 
-
-
                                     $scope.Opengetmoneymodal = function() {
                                         $('#Opengetmoneymodal').modal('show');
                                         $scope.morepaykey = '0';
@@ -7660,9 +7370,6 @@ if($_SESSION['owner_vat_status']=='0' || $_SESSION['owner_vat_status']=='1'){
                                         });
 
                                     };
-
-
-
 
                                     $scope.Summarysale_change = function() {
                                         if ($scope.discount_last_percent != 0) {
