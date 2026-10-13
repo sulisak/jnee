@@ -1994,8 +1994,6 @@ pregetlistcus()" class="form-control" placeholder="<?php echo $lang_sp_42;?>"
 
                                         <!-- try add more 13102026 -->
 
-
-
                                         <!-- Payment Breakdown Rows -->
                                         <tr ng-repeat="y in getonepaylist">
                                             <td colspan="6" style="text-align: right; font-weight: bold; border: none;">
@@ -2005,7 +2003,6 @@ pregetlistcus()" class="form-control" placeholder="<?php echo $lang_sp_42;?>"
                                                 {{y.money | number:<?php echo $_SESSION['decimal_print']; ?>}}
                                             </td>
                                         </tr>
-
 
                                         <!-- try add more 13102026 -->
 
