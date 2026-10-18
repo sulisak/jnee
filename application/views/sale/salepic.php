@@ -2218,7 +2218,7 @@ pregetlistcus()" class="form-control" placeholder="<?php echo $lang_sp_42;?>"
                                         if($_SESSION['logoonslip']=='0'){
                                         ?>
                                         <td width="150px">
-                                            <img src="<?=$base_url?>/<?=$_SESSION['owner_logo']?>" width="100px">
+                                            <img ng-src="<?=$base_url?>/<?=$_SESSION['owner_logo']?>" width="100px">
                                             <!-- <br />
 	<center style="font-size:100px;font-weight:bold;">{{number_for_cus | number}}</center> -->
                                         </td>
@@ -3127,7 +3127,7 @@ echo ''.$lang_endmoney.' ( '.number_format($_SESSION['shift_money_end_old']).' )
 
                                         <center>
                                             <td width="250px" align="center">
-                                                <img src="<?=$base_url?>/<?=$_SESSION['owner_logo']?>" width="200px">
+                                                <img ng-src="<?=$base_url?>/<?=$_SESSION['owner_logo']?>" width="200px">
                                             </td>
                                             </tr>
                                             </table>
@@ -3312,7 +3312,7 @@ echo ''.$lang_endmoney.' ( '.number_format($_SESSION['shift_money_end_old']).' )
                                         <table width="100%">
                                             <tr>
                                                 <td width="150px" align="center">
-                                                    <img src="<?=$base_url?>/<?=$_SESSION['owner_logo']?>"
+                                                    <img ng-src="<?=$base_url?>/<?=$_SESSION['owner_logo']?>"
                                                         style="width: 150px;">
                                                 </td>
                                             </tr>
@@ -3494,7 +3494,7 @@ echo ''.$lang_endmoney.' ( '.number_format($_SESSION['shift_money_end_old']).' )
 
                                         <?php if ($_SESSION['picunderslip'] != ''): ?>
                                         <br />
-                                        <img src="<?php echo $base_url . '/' . $_SESSION['picunderslip']; ?>">
+                                        <img ng-src="<?php echo $base_url . '/' . $_SESSION['picunderslip']; ?>">
                                         <?php endif; ?>
 
                                         <span ng-show="showremarkonslip=='1'">
@@ -4239,7 +4239,7 @@ if($_SESSION['owner_logo']!=''){
                                             <table width="100%">
                                                 <tr>
                                                     <td width="250px" align="center">
-                                                        <img src="<?=$base_url?>/<?=$_SESSION['owner_logo']?>"
+                                                        <img ng-src="<?=$base_url?>/<?=$_SESSION['owner_logo']?>"
                                                             style="width: 200px;">
                                                     </td>
                                                 </tr>

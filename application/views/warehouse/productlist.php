@@ -148,7 +148,7 @@ if($_SESSION['user_type']==4 || $_SESSION['user_type']==3 ) // this one let admi
                             <td align="center">
                                 <span ng-if="x.product_image!=''">
                                     <center>
-                                        <img src="<?php echo $base_url;?>/{{x.product_image}}"
+                                        <img ng-src="<?php echo $base_url;?>/{{x.product_image}}"
                                             class="img img-responsive" width="70px" height="70px;">
                                         <br />
                                         <button class="btn btn-default btn-xs" ng-click="No_product_image(x)">
@@ -904,7 +904,7 @@ if($_SESSION['user_type']==4 || $_SESSION['user_type']==3 ) // this one update f
                                 </b>
                             </h1>
                             <br />
-                            <!-- <img src="<?php echo $base_url;?>/pic/loading.gif"> -->
+                            <!-- <img ng-src="<?php echo $base_url;?>/pic/loading.gif"> -->
                         </div>
 
                     </div>
@@ -938,7 +938,7 @@ if($_SESSION['user_type']==4 || $_SESSION['user_type']==3 ) // this one update f
                                 <br />
                                 <center ng-if="uploadexcel=='1'">
                                     <b><?php echo $lang_pl_50;?></b><br />
-                                    <!-- <img src="<?php echo $base_url;?>/pic/loading.gif"> -->
+                                    <!-- <img ng-src="<?php echo $base_url;?>/pic/loading.gif"> -->
                                     <br />
                                 </center>
                                 <button class="btn btn-success" ng-disabled="uploadexcel=='1'" id="submitexcel"
