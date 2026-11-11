@@ -388,10 +388,9 @@ app.controller('Index', function($scope, $http) {
 
     // Function to request updated QR from PHP controller via AJAX
     $scope.updateQRCode = function(amount) {
-        if (amount <= 0) amount = 5000;
+        // ຖ້າບໍ່ຕ້ອງການກຳນົດຄ່າ Default ຕอนຍອດເງິນ <= 0 ສາມາດລຶບບັນทັດນັ້ນອອກໄດ້ເລີຍ
         if ($scope.currentQRaml === amount) return;
         $scope.currentQRaml = amount;
-
 
         $http.post("<?php echo $base_url;?>/home/get_dynamic_qr_ajax", {
             amount: amount
@@ -400,9 +399,6 @@ app.controller('Index', function($scope, $http) {
                 $scope.dynamicQrImage = data.qr_image;
             }
         });
-
-
-
     };
 
     // Watch cart total changes dynamically and update QR code in real-time
