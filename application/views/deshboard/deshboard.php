@@ -1226,13 +1226,16 @@ app.controller('Index', function($scope, $http, $location) {
 
 
     $scope.get_product_value = function() {
-        $http.get('Sale/product_value/Getstock', {}) // send empty object if no filters
+        $http.get('Home/Getstock', {}) // send empty object if no filters
             .then(function(response) {
                 console.log("Getstock response:", response.data); // debug
                 $scope.product_value_list = response.data;
             });
     };
     $scope.get_product_value();
+
+
+
 
 
     // ==============================================

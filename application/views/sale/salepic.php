@@ -4127,9 +4127,11 @@ if($_SESSION['open_number_for_cus']=='1'){
                                     <h1><b>
                                             {{product_name_order}}
                                         </b></h1>
-
-                                    <input type="password" placeholder="<?php echo $lang_sp_114;?>" ng-model="orderpass"
-                                        class="form-control" style="height:50px;font-size50px;">
+                                    <form>
+                                        <input type="password" placeholder="<?php echo $lang_sp_114;?>"
+                                            ng-model="orderpass" class="form-control"
+                                            style="height:50px;font-size50px;">
+                                    </form>
                                     <br />
 
 

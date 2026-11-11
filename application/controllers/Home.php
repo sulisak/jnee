@@ -1,6 +1,9 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
+use Endroid\QrCode\QrCode;
+use Endroid\QrCode\Writer\PngWriter;
+
 class Home extends MY_Controller {
 
 public function __construct()
@@ -8,6 +11,7 @@ public function __construct()
         parent::__construct();
         $this->load->database();
         $this->load->model('home_model');
+		// $this->load->model('product_value_model'); // <-- ໂຫຼດເພີ່ມບ່ອນນີ້
 		
     }
 
@@ -111,7 +115,19 @@ header("Location: ".$_SERVER['HTTP_REFERER']."");
   echo $this->home_model->Getstockless();
 
   }
-  
+// try to add this function to product value controller
+  function Getstock() {
+    // ຖ້າບໍ່ຈຳເປັນຕ້ອງຮັບ POST Body ໃຫ້ລຶບສ່ວນ file_get_contents ອອກ
+    // ຫະລື ຖ້າຕ້ອງການຮັບທັງ GET/POST:
+    
+    // ຕົວຢ່າງດຶງ Model ມາສະແດງເລີຍ:
+    $list = $this->product_value_model->Getstock();
+    
+    // ສົ່ງຄ່າອອກໄປເປັນ JSON ໃຫ້ AngularJS
+    header('Content-Type: application/json');
+    echo json_encode($list);
+}
+  // try to add this function to product value controller
   
   
   
@@ -228,33 +244,158 @@ echo $this->home_model->Productpawnenddate();
 
 
 
-  public function Showcus2mer()
-  {
+//   public function Showcus2mer()
+//   {
 
-$query = $this->db->query('SELECT
-*
- FROM banner_cus2mer');
+// $query = $this->db->query('SELECT
+// *
+//  FROM banner_cus2mer');
  
  
-	foreach($query->result() as $row){
-	$data['changetime'] = $row->changetime*1000;
-	$data['image1'] = $row->image1;
-	$data['image2'] = $row->image2;
-	$data['image3'] = $row->image3;
-	$data['image4'] = $row->image4;
-	$data['image5'] = $row->image5;
+// 	foreach($query->result() as $row){
+// 	$data['changetime'] = $row->changetime*1000;
+// 	$data['image1'] = $row->image1;
+// 	$data['image2'] = $row->image2;
+// 	$data['image3'] = $row->image3;
+// 	$data['image4'] = $row->image4;
+// 	$data['image5'] = $row->image5;
 	
-	$data['picheight'] = $row->picheight;
-	$data['saleboxheight'] = $row->saleboxheight;
-	$data['show_discount_text'] = $row->show_discount_text;
-	$data['show_pricepernum'] = $row->show_pricepernum;
-} 
+// 	$data['picheight'] = $row->picheight;
+// 	$data['saleboxheight'] = $row->saleboxheight;
+// 	$data['show_discount_text'] = $row->show_discount_text;
+// 	$data['show_pricepernum'] = $row->show_pricepernum;
+// } 
  
-$data['title'] = 'ຈໍລູກຄ້າ';
-$this->showcuslayout('webbody/showcus2mer',$data);
+// $data['title'] = 'ຈໍລູກຄ້າ';
+// $this->showcuslayout('webbody/showcus2mer',$data);
 
 
-  }
+//   }
+
+
+public function Showcus2mer()
+    {
+        // ດຶງຂໍ້ມູນການຕັ້ງຄ່າຈາກຕາຕະລາງ banner_cus2mer
+        $query = $this->db->get('banner_cus2mer');
+        
+        // กำหนดค่าเริ่มต้น (Default values) เผื่อกรณีตารางว่างเปล่า
+        $data['changetime']          = 5000; // ค่าเริ่มต้น 5 วินาที
+        $data['image1']              = '';
+        $data['image2']              = '';
+        $data['image3']              = '';
+        $data['image4']              = '';
+        $data['image5']              = '';
+        $data['picheight']           = 945;
+        $data['saleboxheight']       = 560;
+        $data['show_discount_text']  = '0';
+        $data['show_pricepernum']    = '0';
+
+        // วนลูปดึงข้อมูลแถວแรกมาใช้งาน
+        if ($query->num_rows() > 0) {
+            $row = $query->row();
+            
+            // แปลงเวลาสไลด์โชว์เป็น Milliseconds สำหรับใช้กับ Bootstrap Carousel / ng-interval
+            $data['changetime']         = ($row->changetime > 0) ? $row->changetime * 1000 : 5000;
+            $data['image1']             = $row->image1;
+            $data['image2']             = $row->image2;
+            $data['image3']             = $row->image3;
+            $data['image4']             = $row->image4;
+            $data['image5']             = $row->image5;
+            
+            $data['picheight']          = $row->picheight;
+            $data['saleboxheight']      = $row->saleboxheight;
+            $data['show_discount_text'] = $row->show_discount_text;
+            $data['show_pricepernum']   = $row->show_pricepernum;
+        } 
+        
+        // กำหนดชื่อหัวข้อหน้าเว็บ (รองรับภาษาลาว)
+        $data['title'] = 'ຈໍລູກຄ້າ';
+        
+        // เรียกใช้งาน Layout สำหรับแสดงผลหน้าจอฝั่งลูกค้า
+        $this->showcuslayout('webbody/showcus2mer', $data);
+    }
+
+
+    /**
+     * ຟັງຊັນສ້າງ EMVCo Dynamic QR Payload ພ້ອມຄຳນວນ CRC16
+     */
+   public function get_dynamic_qr_ajax()
+    {
+        // ຮັບຄ່າ JSON ທີ່ສົ່ງມາຈາກ AngularJS
+        $request_data = json_decode(file_get_contents('php://input'), true);
+        $amount = isset($request_data['amount']) ? floatval($request_data['amount']) : 0;
+
+        require_once FCPATH . 'vendor/autoload.php';
+
+        $raw_static_string = "00020101021115312031041800520446mch19FF924FFF6038570016A00526628466257701082771041802030020314mch19FF924FFF65204549953034185802LA5921 KHAO PING SAMAIPHONE6002VT62200716stk6a7d38e1afe846304B15D";
+        
+        // ສ້າງ Dynamic QR String ພ้อมฝังຈຳນວນເງິນ ($amount) ແລະ ຄຳນວນ CRC
+        $dynamic_qr_string = $this->generate_emvco_dynamic_qr($raw_static_string, $amount);
+
+        // ສ້າງ QR Code ດ້ວຍ Endroid (Version 2)
+        $qrCode = new Endroid\QrCode\QrCode($dynamic_qr_string);
+        $qrCode->setSize(300);
+        
+        $dataUri = $qrCode->writeDataUri();
+
+        $response = [
+            'status' => 'success',
+            'qr_image' => $dataUri
+        ];
+
+        header('Content-Type: application/json');
+        echo json_encode($response);
+    }
+
+    private function generate_emvco_dynamic_qr($static_string, $amount)
+    {
+        if (substr($static_string, -4) === 'B15D' || strlen($static_string) > 4) {
+            $pos = strpos($static_string, '6304');
+            if ($pos !== false) {
+                $static_string = substr($static_string, 0, $pos);
+            }
+        }
+
+        $static_string = str_replace('010211', '010212', $static_string);
+
+        $amount_str = number_format($amount, 2, '.', '');
+        $len = strlen($amount_str);
+        $tag54 = '54' . str_pad($len, 2, '0', STR_PAD_LEFT) . $amount_str;
+
+        $target_tag = '5802LA';
+        $pos_tag = strpos($static_string, $target_tag);
+        
+        if ($pos_tag !== false) {
+            $emvco_data = substr_replace($static_string, $tag54, $pos_tag, 0);
+        } else {
+            $emvco_data = $static_string . $tag54;
+        }
+
+        $emvco_data .= '6304';
+        $emvco_data .= $this->calculate_crc16($emvco_data);
+
+        return $emvco_data;
+    }
+
+    private function calculate_crc16($payload)
+    {
+        $result = 0xFFFF;
+        $length = strlen($payload);
+        for ($i = 0; $i < $length; $i++) {
+            $result ^= (ord($payload[$i]) << 8);
+            for ($j = 0; $j < 8; $j++) {
+                if (($result & 0x8000) != 0) {
+                    $result = (($result << 1) ^ 0x1021);
+                } else {
+                    $result = ($result << 1);
+                }
+                $result &= 0xFFFF;
+            }
+        }
+        return strtoupper(str_pad(dechex($result), 4, '0', STR_PAD_LEFT));
+    }
+
+
 
 
 

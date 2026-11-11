@@ -490,13 +490,7 @@ if(!isset($_POST['addshiftmoneystart'])){
 
     	}
 
+       
 
 
-
-
-
-
-
-
-
-	}
+}
