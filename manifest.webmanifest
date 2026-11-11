@@ -1,0 +1,21 @@
+{
+  "short_name": "SVNS Sale",
+  "name": "SVNS Soft POS & Sale System",
+  "icons": [
+    {
+      "src": "/jnee/pic/iconn.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "/jnee/pic/iconn.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": "/jnee/login",
+  "background_color": "blue",
+  "theme_color": "#007bff",
+  "display": "standalone",
+  "orientation": "any"
+}
