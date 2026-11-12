@@ -233,8 +233,6 @@ echo $this->home_model->Productdateend();
 }
 
 
-
-
 function Productpawnenddate()
 {
 
@@ -319,33 +317,47 @@ public function Showcus2mer()
     /**
      * ຟັງຊັນສ້າງ EMVCo Dynamic QR Payload ພ້ອມຄຳນວນ CRC16
      */
-   public function get_dynamic_qr_ajax()
-    {
-        // ຮັບຄ່າ JSON ທີ່ສົ່ງມາຈາກ AngularJS
-        $request_data = json_decode(file_get_contents('php://input'), true);
-        $amount = isset($request_data['amount']) ? floatval($request_data['amount']) : 0;
+  public function get_dynamic_qr_ajax()
+{
+    // ຮັບຄ່າ JSON ທີ່ສົ່ງມາຈາກ AngularJS
+    $request_data = json_decode(file_get_contents('php://input'), true);
+    $amount = isset($request_data['amount']) ? floatval($request_data['amount']) : 0;
 
-        require_once FCPATH . 'vendor/autoload.php';
+    // ດຶງ owner_emvco_string ຈາກຕາຕະລາງ owner ຕາມ store_id ຫລື owner_id ໃນ session
+    $owner_id = isset($_SESSION['store_id']) ? $_SESSION['store_id'] : 1; // ປັບຕາມຕົວແປ session ຂອງທ່ານ
+    
+    $this->db->select('owner_emvco_string');
+    $this->db->where('owner_id', $owner_id);
+    $query = $this->db->get('owner');
+    $owner = $query->row();
 
+    // ກວດສອບວ່າພົບຂໍ້ມູນ ແລະ ມີ EMVCo string ຫລືບໍ່
+    if ($owner && !empty($owner->owner_emvco_string)) {
+        $raw_static_string = $owner->owner_emvco_string;
+    } else {
+        // Fallback case ບໍ່ພົບຂໍ້ມູນໃນ Database
         $raw_static_string = "00020101021115312031041800520446mch19FF924FFF6038570016A00526628466257701082771041802030020314mch19FF924FFF65204549953034185802LA5921 KHAO PING SAMAIPHONE6002VT62200716stk6a7d38e1afe846304B15D";
-        
-        // ສ້າງ Dynamic QR String ພ้อมฝังຈຳນວນເງິນ ($amount) ແລະ ຄຳນວນ CRC
-        $dynamic_qr_string = $this->generate_emvco_dynamic_qr($raw_static_string, $amount);
-
-        // ສ້າງ QR Code ດ້ວຍ Endroid (Version 2)
-        $qrCode = new Endroid\QrCode\QrCode($dynamic_qr_string);
-        $qrCode->setSize(300);
-        
-        $dataUri = $qrCode->writeDataUri();
-
-        $response = [
-            'status' => 'success',
-            'qr_image' => $dataUri
-        ];
-
-        header('Content-Type: application/json');
-        echo json_encode($response);
     }
+
+    require_once FCPATH . 'vendor/autoload.php';
+    
+    // ສ້າງ Dynamic QR String ພ້ອມຝັງຈຳນວນເງິນ ($amount) ແລະ ຄຳນວນ CRC
+    $dynamic_qr_string = $this->generate_emvco_dynamic_qr($raw_static_string, $amount);
+
+    // ສ້າງ QR Code ດ້ວຍ Endroid (ປັບຕາມເວີຊັນທີ່ທ່ານໃຊ້)
+    $qrCode = new \Endroid\QrCode\QrCode($dynamic_qr_string);
+    $qrCode->setSize(300);
+    
+    $dataUri = $qrCode->writeDataUri();
+
+    $response = [
+        'status' => 'success',
+        'qr_image' => $dataUri
+    ];
+
+    header('Content-Type: application/json');
+    echo json_encode($response);
+}
 
     private function generate_emvco_dynamic_qr($static_string, $amount)
     {
@@ -394,11 +406,6 @@ public function Showcus2mer()
         }
         return strtoupper(str_pad(dechex($result), 4, '0', STR_PAD_LEFT));
     }
-
-
-
-
-
 
 
 }

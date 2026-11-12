@@ -334,15 +334,46 @@
                     <h4 class="modal-title">Upload QR</h4>
                 </div>
                 <div class="modal-body">
-                    <form id="uploadQrImg" enctype="multipart/form-data" method="POST">
-                        <input type="hidden" name="owner_id" value="{{owner_id_qr}}">
-                        <input type="file" name="owner_qr" accept="image/*" class="form-control">
-                        <button class="btn btn-success" type="submit">ບັນທຶກ QR</button>
+                    <form id="uploadQrImg" enctype="multipart/form-data">
+                        <!-- File input for the QR code -->
+                        <div class="form-group">
+                            <label>Upload QR Code Image</label>
+                            <input type="file" name="owner_qr" class="form-control" accept="image/*" required>
+                        </div>
+
+                        <!-- Submit Button 1: Normal Upload Only -->
+                        <button type="submit" class="btn btn-default submit-btn" data-url="Brand/Addqr">
+                            Save Image Only
+                        </button>
+
+                        <!-- Submit Button 2: Upload AND Extract EMVCo String -->
+                        <button type="submit" class="btn btn-primary submit-btn" data-url="Brand/Addqr_with_emvco">
+                            Save EMVCo (Upload & Extract)
+                        </button>
                     </form>
                 </div>
             </div>
         </div>
     </div>
+
+    <!-- <form id="uploadQrImg" enctype="multipart/form-data" method="POST">
+        <input type="hidden" name="owner_id" value="{{owner_id_qr}}">
+
+        <div class="form-group">
+            <input type="file" name="owner_qr" accept="image/*" class="form-control">
+        </div>
+
+    
+        <div class="form-group" style="margin-top: 15px;">
+            <button class="btn btn-success submit-btn" type="submit" data-url="Brand/Addqr">
+                ບັນທຶກຮູບພາບຢ່າງດຽວ (Upload Image Only)
+            </button>
+
+            <button class="btn btn-info submit-btn" type="submit" data-url="Brand/Addqr_with_emvco">
+                ອັບໂຫຼດພ້ອມດຶງ EMVCo (Upload & Extract EMVCo)
+            </button>
+        </div>
+    </form> -->
 
 
 
@@ -739,42 +770,53 @@ app.controller('Index', function($scope, $http, $location) {
 
 
 
+    // Keep your modal open function as it is
     $scope.Updateqrmodal = function(x) {
         $scope.owner_id_qr = x.owner_id;
-        console.log("Opening QR modal for owner_id:", x.owner_id); // Debug log
-        $('#updateqrmodal').modal('show'); // jQuery trigger
+        console.log("Opening QR modal for owner_id:", x.owner_id);
+        $('#updateqrmodal').modal('show');
     };
 
     $(document).ready(function() {
+        var targetActionUrl = 'Brand/Addqr'; // Default fallback
+
+        // Capture which submit button was clicked
+        $('#uploadQrImg').on('click', '.submit-btn', function(e) {
+            targetActionUrl = $(this).attr('data-url') || 'Brand/Addqr';
+        });
+
         $('#uploadQrImg').on('submit', function(e) {
             e.preventDefault();
 
             var formData = new FormData(this);
-            // Add owner_id explicitly in case Angular binding fails
             formData.set("owner_id", $scope.owner_id_qr);
 
-            // Log all form data
-            for (var pair of formData.entries()) {
-                console.log(pair[0] + ':', pair[1]);
-            }
+            console.log("Submitting form data to URL:", targetActionUrl);
 
             $.ajax({
                 type: 'POST',
-                url: 'Brand/Addqr',
+                url: targetActionUrl,
                 data: formData,
                 cache: false,
                 contentType: false,
                 processData: false,
                 success: function(data) {
-                    console.log("Upload success:", data); // Debug success
+                    console.log("Upload success:", data);
                     $("#uploadQrImg")[0].reset();
 
-                    // trigger Angular digest manually
                     var scope = angular.element($('#uploadQrImg')).scope();
-                    scope.$apply(function() {
-                        scope.get(); // Refresh your data
-                    });
+                    if (scope) {
+                        scope.$apply(function() {
+                            if (typeof scope.get === 'function') {
+                                scope.get(); // Refresh table view data
+                            }
+                        });
+                    }
 
+                    // Blur any focused buttons inside the modal to prevent aria-hidden focus warnings
+                    $('#updateqrmodal').find(':focus').blur();
+
+                    // Hide the modal
                     $('#updateqrmodal').modal('hide');
                 },
                 error: function(xhr, status, error) {

@@ -127,6 +127,11 @@ public function Addimg($data)
         $updateData['owner_qr'] = $data['owner_qr'];
     }
 
+    // Add this block to include the EMVCo string in the update
+    if(isset($data['owner_emvco_string'])) {
+        $updateData['owner_emvco_string'] = $data['owner_emvco_string'];
+    }
+
     if(!empty($updateData)){
         $success = $this->db->update("owner", $updateData);
         if($success){
