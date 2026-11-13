@@ -229,15 +229,63 @@ $merchant_name     = "KHAO PING SAMAIPHONE";
                 </table>
 
                 <!-- INTEGRATED DYNAMIC QR CODE BOX FOR BCEL APP -->
-                <div class="qr-payment-box">
-                    <div style="color: #1e7e34; font-size: 15px; font-weight: bold; margin-bottom: 5px;">ສະແກນຈ່າຍຜ່ານ
-                        BCEL One</div>
-                    <img id="dynamic-qr-img" ng-src="{{dynamicQrImage}}" alt="BCEL Dynamic QR"
-                        style="width: 150px; height: 150px; margin: 0 auto; display: block;">
-                    <div style="font-size: 12px; color: #555; margin-top: 5px;">ຈຳນວນເງິນ: <span id="qr-amount-text"
-                            style="font-weight: bold; color: #d9534f;">{{Sumsaleprice()-discount_last | number}}</span>
-                        ກີບ</div>
+                <!-- MAIN PAYMENT CONTAINER -->
+                <div
+                    style="background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 12px; padding: 15px; margin: 15px auto; max-width: 320px; text-align: center;">
+
+                    <!-- Instruction Header -->
+                    <div style="font-size: 14px; font-weight: bold; color: #495057; margin-bottom: 10px;">
+                        📱 ສະແກນຈ່າຍເງິນ (Scan to Pay)
+                    </div>
+
+                    <!-- DYNAMIC QR BOX (Always Visible on Page) -->
+                    <div class="qr-payment-box"
+                        style="border: 2px solid #1e7e34; background: #e8f5e9; padding: 12px; border-radius: 10px; text-align: center; margin-bottom: 12px;">
+                        <div style="color: #1e7e34; font-size: 14px; font-weight: bold; margin-bottom: 6px;">
+                            BCEL QR ຕາມຍອດ (ໃນບິນ)
+                        </div>
+                        <div style="background: #fff; padding: 5px; display: inline-block; border: 1px solid #c8e6c9;">
+                            <img id="dynamic-qr-img" ng-src="{{dynamicQrImage}}" alt="BCEL Dynamic QR"
+                                style="width: 150px; height: 150px; display: block; margin: 0 auto;">
+                        </div>
+                        <div style="font-size: 12px; color: #333; margin-top: 6px;">
+                            ຍອດລວມ: <span id="qr-amount-text"
+                                style="font-weight: bold; color: #d9534f;">{{Sumsaleprice()-discount_last | number}}</span>
+                            ກີບ
+                        </div>
+                    </div>
+
+                    <!-- BUTTON TO OPEN STATIC QR MODAL/POPUP -->
+                    <button type="button" ng-click="openStaticQRModal()" class="btn btn-primary btn-sm"
+                        style="width: 100%; padding: 8px; font-weight: bold; background-color: #0056b3; border-color: #004085; color: #fff; border-radius: 6px;">
+                        🔍 ເບິ່ງ QR (Static QR ບັນຊີຮ້ານ)
+                    </button>
+
                 </div>
+
+                <!-- STATIC QR MODAL POPUP (Hidden by default, toggled via AngularJS) -->
+                <div ng-if="showStaticModal"
+                    style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: flex; justify-content: center; align-items: center; z-index: 9999;">
+                    <div
+                        style="background: #fff; padding: 20px; border-radius: 10px; text-align: center; width: 280px; box-shadow: 0 4px 10px rgba(0,0,0,0.3);">
+                        <div style="color: #0056b3; font-size: 15px; font-weight: bold; margin-bottom: 10px;">
+                            QR (Static QR)
+                        </div>
+                        <div
+                            style="background: #fff; padding: 5px; display: inline-block; border: 1px solid #eee; margin-bottom: 10px;">
+                            <img ng-src="<?php echo $base_url;?>/{{staticQrImage}}" alt="Static QR"
+                                style="width: 180px; height: 180px; display: block; margin: 0 auto;">
+                        </div>
+                        <div style="font-size: 12px; color: #ec0707; margin-bottom: 15px; font-weight: bold;">
+                            ໂອນຕາມຍອດເງິນຕາມໃຈ/ ບັນຊີຮ້ານຄ້າໂດຍກົງ
+                        </div>
+                        <button type="button" ng-click="closeStaticQRModal()" class="btn btn-danger btn-sm"
+                            style="width: 100%; padding: 6px; font-weight: bold; background-color: #dc3545; border-color: #bd2130; color: #fff; border-radius: 4px;">
+                            ປິດ (Close)
+                        </button>
+                    </div>
+                </div>
+                <!-- INTEGRATED DYNAMIC QR CODE BOX FOR BCEL APP -->
 
             </div>
         </div>
@@ -383,21 +431,84 @@ app.controller('Index', function($scope, $http) {
     $scope.money_change_showcus[0].money_change_showcus = '0.01';
     $scope.discount_last = '0.00';
     $scope.listsale = [];
+
+    // original QR code dynamic generation
+
+    // $scope.staticQrImage = '';
+    // $scope.dynamicQrImage = '';
+    // $scope.currentQRaml = 0;
+
+    // // Function to request updated QR from PHP controller via AJAX
+    // $scope.updateQRCode = function(amount) {
+    //     // ຖ້າບໍ່ຕ້ອງການກຳນົດຄ່າ Default ຕอนຍອດເງິນ <= 0 ສາມາດລຶບບັນทັດນັ້ນອອກໄດ້ເລີຍ
+    //     if ($scope.currentQRaml === amount) return;
+    //     $scope.currentQRaml = amount;
+
+    //     $http.post("<?php echo $base_url;?>/home/get_dynamic_qr_ajax", {
+    //         amount: amount
+    //     }).success(function(data) {
+    //         if (data && data.qr_image) {
+    //             $scope.dynamicQrImage = data.qr_image;
+    //         }
+    //     });
+    // };
+
+    // // Watch cart total changes dynamically and update QR code in real-time
+    // $scope.$watch(function() {
+    //     return $scope.Sumsaleprice() - parseFloat($scope.discount_last || 0);
+    // }, function(newVal) {
+    //     if (newVal !== undefined) {
+    //         $scope.updateQRCode(newVal);
+    //     }
+    // });
+
+
+    // original QR code dynamic generation
+
+
+    // update the QR code dynamically based on the total amount to be paid =============================
+
+    $scope.staticQrImage = '';
     $scope.dynamicQrImage = '';
     $scope.currentQRaml = 0;
 
+
+    // ADD THESE NEW MODAL VARIABLES AND FUNCTIONS HERE:
+    $scope.showStaticModal = false;
+
+    $scope.openStaticQRModal = function() {
+        $scope.showStaticModal = true;
+    };
+
+    $scope.closeStaticQRModal = function() {
+        $scope.showStaticModal = false;
+    };
+
     // Function to request updated QR from PHP controller via AJAX
     $scope.updateQRCode = function(amount) {
-        // ຖ້າບໍ່ຕ້ອງການກຳນົດຄ່າ Default ຕอนຍອດເງິນ <= 0 ສາມາດລຶບບັນทັດນັ້ນອອກໄດ້ເລີຍ
-        if ($scope.currentQRaml === amount) return;
+        // Prevent unnecessary requests if amount is zero/negative or hasn't changed
+        if (amount === undefined || amount <= 0) return;
+        if ($scope.currentQRaml === amount && $scope.dynamicQrImage) return;
+
         $scope.currentQRaml = amount;
 
         $http.post("<?php echo $base_url;?>/home/get_dynamic_qr_ajax", {
             amount: amount
-        }).success(function(data) {
-            if (data && data.qr_image) {
-                $scope.dynamicQrImage = data.qr_image;
+        }).then(function(response) {
+            var data = response.data;
+            if (data && data.status === 'success') {
+                // Bind Dynamic QR Code image data URI
+                if (data.qr_image) {
+                    $scope.dynamicQrImage = data.qr_image;
+                }
+                // Bind Static QR image path if returned from database
+                if (data.owner_qr) {
+                    $scope.staticQrImage = data.owner_qr;
+                    // $scope.staticQrImage = "<?php echo $base_url;?>/uploads/owner/" + data.owner_qr;
+                }
             }
+        }, function(error) {
+            console.error("Error generating dynamic QR code:", error);
         });
     };
 
@@ -405,10 +516,16 @@ app.controller('Index', function($scope, $http) {
     $scope.$watch(function() {
         return $scope.Sumsaleprice() - parseFloat($scope.discount_last || 0);
     }, function(newVal) {
-        if (newVal !== undefined) {
+        if (newVal !== undefined && newVal > 0) {
             $scope.updateQRCode(newVal);
         }
     });
+
+    // update the QR code dynamically based on the total amount to be paid =============================
+
+
+
+
 
     $scope.Showlistorder = function() {
         $http.post("<?php echo $base_url;?>/sale/Salepic/showlistorder", {}).success(function(data) {
