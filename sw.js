@@ -26,12 +26,27 @@ self.addEventListener('activate', (event) => {
     return clients.claim();
 });
 
-// 3. Fetch Event: Pass network requests through so your live POS system always fetches fresh data
+// 3. Fetch Event: Safely handle requests without crashing on POST or cache misses
 self.addEventListener('fetch', (event) => {
+    // Skip non-GET requests (like POST AJAX uploads)
+    if (event.request.method !== 'GET') {
+        return;
+    }
+
+    // Skip navigation requests (standard page loads like /brand) so Apache handles them directly
+    if (event.request.mode === 'navigate') {
+        return;
+    }
+
     event.respondWith(
-        fetch(event.request).catch(() => {
-            // Fallback option if network is offline (optional)
-            return caches.match(event.request);
-        })
+        fetch(event.request)
+            .catch(() => {
+                return caches.match(event.request).then((cachedResponse) => {
+                    return cachedResponse || new Response('Network error', {
+                        status: 408,
+                        headers: { 'Content-Type': 'text/plain' }
+                    });
+                });
+            })
     );
 });

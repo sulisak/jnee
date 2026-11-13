@@ -1,4 +1,10 @@
 <?php 
+require_once __DIR__ . '/../../../vendor/autoload.php';
+// require_once __DIR__ . '/../../../vendor/autoload.php';
+
+use Endroid\QrCode\QrCode;
+use Endroid\QrCode\Writer\PngWriter;
+
 foreach ($Getpermission_rule as $value) {
  $arr =  json_decode($value['permission_rule']);
 }
@@ -11,8 +17,30 @@ foreach ($Getpermission_rule as $value) {
 }
 
 .qr-img {
-    width: 100px;
-    height: auto;
+    width: 300px;
+    height: 300px;
+}
+
+.owner_emvco_string {
+    width: 300px;
+    height: 300px;
+}
+
+td[align="center"] {
+    text-align: center !important;
+}
+
+#local-qrcode-container {
+    display: inline-block;
+    margin: 0 auto;
+    text-align: center;
+}
+
+/* Ensure the generated QR canvas/image centers correctly */
+#local-qrcode-container img,
+#local-qrcode-container canvas {
+    display: block;
+    margin: 0 auto;
 }
 
 .div td,
@@ -56,7 +84,7 @@ else {
 </style>
 
 <head>
-
+    <script src="<?=$base_url?>/js/qrcode.min.js"></script>
 
 </head>
 
@@ -721,12 +749,47 @@ if($_SESSION['owner_vat_status']=='2'){
                                 </tr>
 
 
-                                <tr>
-                                    <td align="center">
+
+                                <!-- add new QR -->
+                                <!-- OPTION 1: Static image QR (Always displayed now) -->
+                                <tr ng-if="owner_qr && owner_qr !== ''">
+                                    <td align="center" style="text-align: center;">
                                         <img ng-src="<?=$base_url?>/{{owner_qr}}" class="qr-img" width="300"
                                             height="300" />
                                     </td>
                                 </tr>
+
+
+
+                                <tr>
+                                    <td align="center" style="text-align: center;">
+                                        <div class="qr-payment-box"
+                                            style="display: inline-block; border: 2px dashed #007bff; padding: 15px; border-radius: 10px; background: #fff; margin: 10px auto;">
+
+                                            <!-- Green Header -->
+                                            <div
+                                                style="color: #008000; font-size: 16px; font-weight: bold; margin-bottom: 8px;">
+                                                ສະແກນຈ່າຍຜ່ານ BCEL One (Dynamic)
+                                            </div>
+
+                                            <!-- Server-Generated Dynamic QR Image -->
+                                            <img ng-src="{{dynamicQrImage}}" alt="BCEL Dynamic QR"
+                                                style="width: 200px; height: 200px; padding: 5px; background: #fff; margin: 0 auto; display: block;" />
+
+                                            <!-- Red Amount Footer Label -->
+                                            <div
+                                                style="font-size: 15px; font-weight: bold; margin-top: 8px; color: #333;">
+                                                ຈຳນວນເງິນ: <span
+                                                    style="color: red;">{{ getFinalTotalAmount() | number }}</span> ກີບ
+                                            </div>
+
+                                        </div>
+                                    </td>
+                                </tr>
+                                <!-- add new QR -->
+
+
+
 
                                 <tr style="font-size: 20px;color: #b53e07ff;">
                                     <td align="center">
@@ -7630,12 +7693,6 @@ if($_SESSION['owner_vat_status']=='0' || $_SESSION['owner_vat_status']=='1'){
                                     };
 
 
-
-
-
-
-
-
                                     $scope.Sum_product_weight_bill = function() {
                                         var total = 0;
                                         angular.forEach($scope.listone, function(item) {
@@ -7654,56 +7711,314 @@ if($_SESSION['owner_vat_status']=='0' || $_SESSION['owner_vat_status']=='1'){
 
 
                                     // add new for show promp pay ------------------------
-                                    $scope.Checkbill = function() {
-                                        // $scope.isModal = true;
 
-                                        if (!$scope.owner_qr) {
+
+                                    $scope.Checkbill = function() {
+                                        // If variables haven't been fetched yet, fetch them from backend
+                                        if (!$scope.owner_qr && !$scope.owner_emvco_string) {
                                             $http.get('<?=$base_url?>/salesetting/ppsetting/Getqr')
                                                 .then(function(response) {
-                                                        console.log("QR Response:", response
-                                                            .data); // Debug here
-                                                        $scope.owner_qr = response
-                                                            .data.owner_qr;
+                                                    $scope.owner_qr = response.data.owner_qr || '';
+                                                    $scope.owner_emvco_string = response.data
+                                                        .owner_emvco_string || '';
 
-                                                        $('#Checkbillmodal').modal('show');
-                                                    },
-                                                    function(error) {
-                                                        console.error("Error fetching QR:", error);
-                                                        $scope.owner_qr = '';
-                                                        $('#Checkbillmodal').modal('show');
-                                                    });
+                                                    // FIX: Generate dynamic QR as long as the emvco string exists (independent of owner_qr)
+                                                    if ($scope.owner_emvco_string) {
+                                                        $scope.updateQRCode($scope
+                                                            .getFinalTotalAmount());
+                                                    }
+
+                                                    $('#Checkbillmodal').modal('show');
+                                                }, function(error) {
+                                                    console.error("Error fetching QR:", error);
+                                                    $('#Checkbillmodal').modal('show');
+                                                });
                                         } else {
+                                            // FIX: Refresh the dynamic QR amount whenever modal is opened
+                                            if ($scope.owner_emvco_string) {
+                                                $scope.updateQRCode($scope.getFinalTotalAmount());
+                                            }
                                             $('#Checkbillmodal').modal('show');
                                         }
                                     };
-                                    // Controller loads
-                                    $scope.owner_qr = ''; // initialize
+
+                                    // Initialize variables properly
+                                    $scope.owner_qr = '';
+                                    $scope.owner_emvco_string = '';
+
+                                    // Load QR settings safely
                                     $scope.qr_loadsale = function() {
                                         $http.get('<?=$base_url?>/salesetting/ppsetting/Getqr_loadsale')
                                             .then(function(response) {
-                                                console.log("QR Response:", response.data);
-                                                $scope.owner_qr = response.data.owner_qr || '';
+                                                if (response && response.data) {
+                                                    $scope.owner_qr = response.data.owner_qr || '';
+                                                    $scope.owner_emvco_string = response.data
+                                                        .owner_emvco_string || '';
+
+                                                    // FIX: Always generate dynamic QR if emvco string is present
+                                                    if ($scope.owner_emvco_string) {
+                                                        $scope.updateQRCode($scope
+                                                            .getFinalTotalAmount());
+                                                    }
+                                                }
                                             }, function(error) {
-                                                console.error("Error fetching QR:", error);
-                                                $scope.owner_qr = '';
+                                                console.error("Failed to load QR settings:", error);
+                                                // Fallback generation so the box still shows even if backend fails
+                                                $scope.updateQRCode($scope.getFinalTotalAmount());
                                             });
                                     };
-                                    // Call it immediately on controller load
+
+                                    // Execute on startup
                                     $scope.qr_loadsale();
 
 
-                                    // Initialize variable to hold exchange rate list
+
+                                    // add new for QR gen with amount -------------------------
+                                    $scope.owner_qr = '';
+                                    $scope.owner_emvco_string = '';
+                                    // $scope.currentQRaml = 0;
+
+
+                                    $scope.getFinalTotalAmount = function() {
+                                        // 1. Get the base sum of the sale
+                                        var subtotal = 0;
+                                        if (typeof $scope.Sumsaleprice === 'function') {
+                                            subtotal = parseFloat($scope.Sumsaleprice()) || 0;
+                                        }
+
+                                        // 2. Add VAT if applicable (vatnumber)
+                                        var vatRate = parseFloat($scope.vatnumber) || 0;
+                                        var totalWithVat = subtotal + (subtotal * (vatRate / 100));
+
+                                        // 3. Apply discount based on whether discount_percent is 0 or 1
+                                        var finalTotal = totalWithVat;
+                                        var discountPercent = String($scope.discount_percent);
+
+                                        if (discountPercent === '0') {
+                                            // Flat amount discount
+                                            var flatDiscount = parseFloat($scope.discount_last) || 0;
+                                            finalTotal = totalWithVat - flatDiscount;
+                                        } else if (discountPercent === '1') {
+                                            // Percentage discount
+                                            var percentVal = parseFloat($scope.discount_last_percent) || 0;
+                                            finalTotal = totalWithVat - (totalWithVat * (percentVal / 100));
+                                        }
+
+                                        // Ensure it doesn't go below 0
+                                        return Math.max(0, finalTotal);
+                                    };
+
+
+                                    $scope.dynamicQrImage = '';
+                                    $scope.currentQRaml = 0;
+
+                                    // Function to request updated QR image from PHP controller via AJAX
+
+                                    // last one for qr dynamic with amount show in qr code
+
+                                    // $scope.updateQRCode = function(amount) {
+                                    //     if (amount === undefined || amount <= 0) return;
+
+                                    //     var container = document.getElementById('local-qrcode-container');
+                                    //     if (!container) {
+                                    //         // Container isn't in the DOM yet (modal is closed), so skip silently
+                                    //         return;
+                                    //     }
+
+                                    //     if ($scope.currentQRaml === amount && container.hasChildNodes()) {
+                                    //         return; // Already rendered for this amount
+                                    //     }
+                                    //     $scope.currentQRaml = amount;
+
+                                    //     // Clear previous QR
+                                    //     container.innerHTML = '';
+
+                                    //     var tlvPayload = generateEMVCoPayload(amount);
+                                    //     if (!tlvPayload) return;
+
+                                    //     console.log("Final Payload sent to QRCode generator:", tlvPayload);
+
+                                    //     // Render locally using qrcode.js
+                                    //     try {
+                                    //         new QRCode(container, {
+                                    //             text: tlvPayload,
+                                    //             width: 200,
+                                    //             height: 200
+                                    //         });
+                                    //         console.log("QR Code successfully rendered into container!");
+                                    //     } catch (err) {
+                                    //         console.error("QRCode library error:", err);
+                                    //     }
+                                    // };
+
+
+                                    // update 13112026 for QR dynamic with amount show in qr code
+
+                                    $scope.updateQRCode = function(amount) {
+                                        if (amount === undefined || amount <= 0) return;
+
+                                        // Prevent duplicate calls for the exact same amount
+                                        if ($scope.currentQRaml === amount && $scope.dynamicQrImage) {
+                                            return;
+                                        }
+                                        $scope.currentQRaml = amount;
+
+                                        // Call your PHP backend endpoint to generate the dynamic QR image
+                                        $http.post(
+                                            "<?=$base_url?>/salesetting/ppsetting/get_dynamic_qr_ajax", {
+                                                amount: amount
+                                            }).then(function(response) {
+                                            if (response.data && response.data.status ===
+                                                'success') {
+                                                // 1. Bind Static QR image path
+                                                if (response.data.owner_qr) {
+                                                    $scope.staticQrImage =
+                                                        "<?=$base_url?>/uploads/owner/" + response
+                                                        .data.owner_qr;
+                                                }
+
+                                                // 2. Bind Server-generated Dynamic QR data URI
+                                                $scope.dynamicQrImage = response.data.qr_image;
+                                                console.log(
+                                                    "Dynamic QR image updated successfully for amount:",
+                                                    amount);
+                                            }
+                                        }, function(error) {
+                                            console.error("Error fetching dynamic QR from server:",
+                                                error);
+                                        });
+                                    };
+
+                                    // Real-time watcher on cart total changes
+                                    $scope.$watch(function() {
+                                        return $scope.getFinalTotalAmount();
+                                    }, function(newVal) {
+                                        if (newVal !== undefined && newVal > 0) {
+                                            $scope.updateQRCode(newVal);
+                                        }
+                                    });
+                                    // update 13112026 for QR dynamic with amount show in qr code
+
+
+
+                                    // last one for qr dynamic with amount show in qr code
+
+                                    // Also, make sure to call updateQRCode inside your Checkbill function when the modal opens:
+                                    $scope.Checkbill = function() {
+                                        $('#Checkbillmodal').modal('show');
+
+                                        // Trigger QR generation now that the modal (and container) is in the DOM
+                                        $timeout(function() {
+                                            $scope.updateQRCode($scope.getFinalTotalAmount());
+                                        }, 100);
+                                    };
+
+                                    // Watch total changes dynamically
+                                    $scope.$watch(function() {
+                                        return $scope.getFinalTotalAmount();
+                                    }, function(newVal) {
+                                        if (newVal !== undefined && newVal > 0) {
+                                            $scope.updateQRCode(newVal);
+                                        }
+                                    });
+                                    // try new for qr dynamic with amount show in qr code
+
+                                    // 3. Inject Tag 54 (Amount) & Recalculate CRC-16 CCITT-FALSE Checksum
+                                    // 3. Tag 54 & CRC-16 Calculator
+                                    function injectAmountToEMVCo(emvcoString, amount) {
+                                        if (!emvcoString) return '';
+                                        var amtStr = parseFloat(amount).toFixed(2);
+                                        var tag54 = "54" + String(amtStr.length).padStart(2, '0') + amtStr;
+
+                                        var cleanStr = emvcoString.replace("010211", "010212");
+                                        cleanStr = cleanStr.substring(0, cleanStr.length - 4);
+
+                                        if (cleanStr.includes("5802")) {
+                                            cleanStr = cleanStr.replace("5802", tag54 + "5802");
+                                        }
+
+                                        var dataToCrc = cleanStr + "6304";
+                                        var crcHex = calculateCRC16CCITT(dataToCrc).toString(16).toUpperCase()
+                                            .padStart(4, '0');
+
+                                        return dataToCrc + crcHex;
+                                    }
+
+
+
+                                    function calculateCRC16CCITT(str) {
+                                        var crc = 0xFFFF;
+                                        for (var i = 0; i < str.length; i++) {
+                                            crc ^= (str.charCodeAt(i) << 8);
+                                            for (var j = 0; j < 8; j++) {
+                                                if ((crc & 0x8000) !== 0) {
+                                                    crc = ((crc << 1) ^ 0x1021);
+                                                } else {
+                                                    crc = ((crc << 1) & 0xFFFF);
+                                                }
+                                            }
+                                        }
+                                        var crcHex = crc.toString(16).toUpperCase();
+                                        while (crcHex.length < 4) {
+                                            crcHex = '0' + crcHex;
+                                        }
+                                        return crcHex;
+                                    }
+
+                                    // Updated payload generator using your CRC function
+
+                                    // add new for QR gen with amount -------------------------
+
+                                    function generateLocalQR(emvcoString) {
+                                        setTimeout(function() {
+                                            var container = document.getElementById(
+                                                "local-qrcode-container");
+                                            if (!container) return;
+
+                                            container.innerHTML = ""; // Clear previous QR code
+
+                                            if (typeof QRCode === "undefined") {
+                                                var script = document.createElement('script');
+                                                // Point to your local file path using PHP base_url
+                                                script.src = "<?=$base_url?>/js/qrcode.min.js";
+                                                script.onload = function() {
+                                                    createQR(container, emvcoString);
+                                                };
+                                                document.head.appendChild(script);
+                                            } else {
+                                                createQR(container, emvcoString);
+                                            }
+                                        }, 100);
+                                    }
+
+                                    function createQR(container, emvcoString) {
+                                        new QRCode(container, {
+                                            text: emvcoString,
+                                            width: 300,
+                                            height: 300,
+                                            correctLevel: QRCode.CorrectLevel
+                                                .L // Low error correction for long strings
+                                        });
+                                    }
+
+                                    // Call on startup
+                                    $scope.qr_loadsale();
+
+
+
                                     $scope.exchangerates = [];
 
                                     // Function to fetch exchange rate
                                     $scope.loadExchangerate = function() {
                                         $http.get('<?=$base_url?>/salesetting/exchangerate/Get')
                                             .then(function(response) {
-                                                console.log("Exchange Rate Response:", response.data);
+                                                console.log("Exchange Rate Response:", response
+                                                    .data);
                                                 // Assuming response.data.list contains the array of exchange rates
                                                 $scope.exchangerates = response.data.list || [];
                                             }, function(error) {
-                                                console.error("Error fetching exchange rate:", error);
+                                                console.error("Error fetching exchange rate:",
+                                                    error);
                                                 $scope.exchangerates = [];
                                             });
                                     };
@@ -7789,7 +8104,8 @@ if($_SESSION['owner_vat_status']=='0' || $_SESSION['owner_vat_status']=='1'){
                                         '<link href="<?php echo $base_url;?>/css/css2.css" rel="stylesheet" type="text/css">' +
                                         '<link rel="preconnect" href="https://fonts.gstatic.com"><link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500&family=Kanit:wght@400&family=Prompt:wght@400&family=Chakra+Petch:wght@400&family=Taviraj:wght@400&family=Sarabun:wght@400&family=Thasadith:wght@400&family=Mitr:wght@400&family=Itim:wght@400&family=Trirong:wght@400&family=Mali:wght@400&family=Krub:wght@400&family=Bai+Jamjuree:wght@400&family=Pridi:wght@400&family=Sriracha:wght@400&family=Pattaya:wght@400&family=Charm:wght@400&family=Niramit:wght@400&family=Maitree:wght@400&family=Athiti:wght@400&family=Chonburi:wght@400&family=K2D:wght@400&family=Srisakdi:wght@400&family=Kodchasan:wght@400&family=KoHo:wght@400&family=Charmonman:wght@400&family=Fahkwang:wght@400&display=swap" rel="stylesheet">' +
                                         '</head>' +
-                                        '<body onload="window.print(); window.close();">' + divToPrint.innerHTML +
+                                        '<body onload="window.print(); window.close();">' + divToPrint
+                                        .innerHTML +
                                         '</body>' +
                                         '<style> body{font-family: "Phetsarath OT", sans-serif;}</style>' +
 
