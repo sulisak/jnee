@@ -34,12 +34,14 @@ public function __construct()
 	 */
 	public function index()
 	{
-
+         $this->load->helper('url');
 		$data['tab'] = 'brand';
 		$data['title'] = 'Store Manager Brand';
 		$this->deshboardlayout('storemanager/brand',$data);
 	}
 
+
+  
 
 	function Add()
     {
@@ -236,60 +238,55 @@ function Addqr()
 // add new for QR code EMVCo string -----------------
 
 // Option B: Uploads the image AND automatically extracts/saves the EMVCo string
-    public function Addqr_with_emvco()
-    {
-        $owner_id = isset($_POST['owner_id']) ? $_POST['owner_id'] : 0;
-        $data = array('owner_id' => $owner_id);
+ public function Addqr_with_emvco()
+{
+    $owner_id = isset($_POST['owner_id']) ? $_POST['owner_id'] : 0;
+    $data = array('owner_id' => $owner_id);
 
-        $image_path = $this->_handle_qr_upload();
-        if ($image_path) {
-            $data['owner_qr'] = $image_path;
+    $image_path = $this->_handle_qr_upload();
+    if ($image_path) {
+        $data['owner_qr'] = $image_path;
 
-            // Automatically extract the raw EMVCo string from the uploaded file
-            $emvco_string = $this->_extract_emvco_string($image_path);
-            if (!empty($emvco_string)) {
-                $data['owner_emvco_string'] = $emvco_string;
-            }
-        }
-
-        $success = $this->store_brand_model->Addimg($data);
-
-        if ($success) {
-            echo json_encode([
-                'status' => 'success', 
-                'path' => isset($data['owner_qr']) ? $data['owner_qr'] : '',
-                'emvco_string' => isset($data['owner_emvco_string']) ? $data['owner_emvco_string'] : ''
-            ]);
-        } else {
-            echo json_encode(['status' => 'error', 'message' => 'Failed to save EMVCo data']);
+        // Automatically extract raw EMVCo string from the uploaded file
+        $emvco_string = $this->_extract_emvco_string($image_path);
+        if (!empty($emvco_string)) {
+            $data['owner_emvco_string'] = $emvco_string;
         }
     }
 
-    /**
-     * Shared Helper 1: Handles directory creation and moving the uploaded file.
-     */
-    private function _handle_qr_upload()
-    {
-        if (isset($_FILES["owner_qr"]["name"]) && $_FILES["owner_qr"]["name"] != '') {
-            $dir = "pic/owner_qr/".$_SESSION['store_id'];
-            
-            if (!file_exists($dir)) {
-                mkdir($dir, 0777, true);
-            }
+    // Updates both owner_qr and owner_emvco_string in one go
+    $success = $this->store_brand_model->Addimg($data);
 
-            $filename = $dir.'/'.time().md5($_FILES["owner_qr"]["name"]).'.jpg';
-
-            if (move_uploaded_file($_FILES["owner_qr"]["tmp_name"], $filename)) {
-                return $filename;
-            }
-        }
-        return false;
+    if ($success) {
+        echo json_encode([
+            'status' => 'success', 
+            'path' => isset($data['owner_qr']) ? $data['owner_qr'] : '',
+            'emvco_string' => isset($data['owner_emvco_string']) ? $data['owner_emvco_string'] : ''
+        ]);
+    } else {
+        echo json_encode(['status' => 'error', 'message' => 'Failed to save data']);
     }
+}
 
-    /**
-     * Shared Helper 2: Handles reading the image file and extracting the raw EMVCo string.
-     */
-   private function _extract_emvco_string($filename)
+private function _handle_qr_upload()
+{
+    if (isset($_FILES["owner_qr"]["name"]) && $_FILES["owner_qr"]["name"] != '') {
+        $dir = "pic/owner_qr/".$_SESSION['store_id'];
+        
+        if (!file_exists($dir)) {
+            mkdir($dir, 0777, true);
+        }
+
+        $filename = $dir.'/'.time().md5($_FILES["owner_qr"]["name"]).'.jpg';
+
+        if (move_uploaded_file($_FILES["owner_qr"]["tmp_name"], $filename)) {
+            return $filename;
+        }
+    }
+    return false;
+}
+
+private function _extract_emvco_string($filename)
 {
     require_once FCPATH . 'vendor/autoload.php';
 
@@ -297,7 +294,6 @@ function Addqr()
         $absolute_path = FCPATH . $filename;
         
         if (!file_exists($absolute_path)) {
-            error_log("EMVCo Error: File does not exist at " . $absolute_path);
             return '';
         }
 
@@ -306,20 +302,12 @@ function Addqr()
         } elseif (class_exists('QrReader')) {
             $qrcode = new QrReader($absolute_path);
         } else {
-            error_log("EMVCo Error: QrReader class not found.");
             return '';
         }
 
         $text = $qrcode->text();
-        
-        // Log what text was actually decoded
-        if (empty($text)) {
-            error_log("EMVCo Warning: QrReader returned empty text for file: " . $filename);
-        }
-
         return !empty($text) ? trim($text) : '';
     } catch (Exception $e) {
-        error_log("EMVCo Exception: " . $e->getMessage());
         return '';
     }
 }

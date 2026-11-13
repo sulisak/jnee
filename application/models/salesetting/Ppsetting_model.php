@@ -29,32 +29,39 @@ return $encode_data;
 
         }
 
+
+
 public function Getqr()
 {
-    ob_clean(); // clear any previous output
+    ob_clean(); // Fixed from ob_clear()
 
-    $query = $this->db->query('SELECT owner_qr FROM owner LIMIT 1');
+    $query = $this->db->query('SELECT owner_qr, owner_emvco_string FROM owner LIMIT 1');
     $row = $query->row();
 
-    $result = $row ? ['owner_qr' => $row->owner_qr] : ['owner_qr' => ''];
+    if ($row) {
+        // Return both values simultaneously so both QR codes can display
+        $result = [
+            'owner_qr' => $row->owner_qr, 
+            'owner_emvco_string' => $row->owner_emvco_string
+        ];
+    } else {
+        $result = [
+            'owner_qr' => '', 
+            'owner_emvco_string' => ''
+        ];
+    }
 
     // Force single clean JSON output
     header('Content-Type: application/json');
     echo json_encode($result, JSON_UNESCAPED_UNICODE);
-    exit; // prevent further output like {"list":null}
+    exit; 
 }
 
-
- public function Getqr_loadsale() {
-        ob_clean();
-        $query = $this->db->query('SELECT owner_qr FROM owner LIMIT 1');
-        $row = $query->row();
-        $result = $row ? ['owner_qr' => $row->owner_qr] : ['owner_qr' => ''];
-        header('Content-Type: application/json');
-        echo json_encode($result, JSON_UNESCAPED_UNICODE);
-        exit;
-    }
-
+public function Getqr_loadsale() {
+    // Reuse the exact same logic for loading sales
+    $this->Getqr();
+}
+ 
 
 
     }

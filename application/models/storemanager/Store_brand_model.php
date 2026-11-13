@@ -115,6 +115,38 @@ $this->db->update("branch", $data5);
 
 //   }
 
+// public function Addimg($data)
+// {
+//     $this->db->where('owner_id', $data['owner_id']);
+
+//     $updateData = array();
+//     if(isset($data['owner_logo'])) {
+//         $updateData['owner_logo'] = $data['owner_logo'];
+//     }
+//     if(isset($data['owner_qr'])) {
+//         $updateData['owner_qr'] = $data['owner_qr'];
+//     }
+
+//     // Add this block to include the EMVCo string in the update
+//     // Ensures owner_emvco_string gets updated along with the QR path
+//     if(isset($data['owner_emvco_string'])) {
+//         $updateData['owner_emvco_string'] = $data['owner_emvco_string'];
+//     }
+
+//     if(!empty($updateData)){
+//         $success = $this->db->update("owner", $updateData);
+//         if($success){
+//             $this->session->set_userdata($updateData);
+//             return true;
+//         } else {
+//             return false;
+//         }
+//     }
+
+//     return false; // nothing to update
+// }
+
+
 public function Addimg($data)
 {
     $this->db->where('owner_id', $data['owner_id']);
@@ -126,8 +158,6 @@ public function Addimg($data)
     if(isset($data['owner_qr'])) {
         $updateData['owner_qr'] = $data['owner_qr'];
     }
-
-    // Add this block to include the EMVCo string in the update
     if(isset($data['owner_emvco_string'])) {
         $updateData['owner_emvco_string'] = $data['owner_emvco_string'];
     }
@@ -264,31 +294,60 @@ if ($this->db->update("owner", $data)){
 
 
 
-   public function Get()
-        {
+//    public function Get()
+//         {
 
-$this->db->select('owner_id,owner_logo,owner_qr,owner_bgimg,
-owner_name,owner.owner_tax_number,owner_vat,
-owner_vat_status,owner_address,
-owner.tel,add_time,end_time,
-header_slip,
-footer_slip,
-header_a4,
-footer_a4,
-befor_runno,
-runno_digit,
-reset_runno,
-logoonslip,
-youtube_url_forcus')
-        ->from('owner')
-        ->where('store_id', $_SESSION['store_id'])
-        ->order_by('owner_id','DESC');
-        $query = $this->db->get();
-$encode_data = json_encode($query->result(),JSON_UNESCAPED_UNICODE );
-return $encode_data;
-        }
+// $this->db->select('owner_id,owner_logo,owner_qr,owner_emvco_string,owner_bgimg,
+// owner_name,owner.owner_tax_number,owner_vat,
+// owner_vat_status,owner_address,
+// owner.tel,add_time,end_time,
+// header_slip,
+// footer_slip,
+// header_a4,
+// footer_a4,
+// befor_runno,
+// runno_digit,
+// reset_runno,
+// logoonslip,
+// youtube_url_forcus')
+//         ->from('owner')
+//         ->where('store_id', $_SESSION['store_id'])
+//         ->order_by('owner_id','DESC');
+//         $query = $this->db->get();
+// $encode_data = json_encode($query->result(),JSON_UNESCAPED_UNICODE );
+// return $encode_data;
+//         }
 
+public function Get()
+{
+    // Safely check if store_id session exists to prevent 500 errors
+    $store_id = isset($_SESSION['store_id']) ? $_SESSION['store_id'] : null;
 
+    if (empty($store_id)) {
+        return json_encode([], JSON_UNESCAPED_UNICODE);
+    }
+
+    $this->db->select('owner_id,owner_logo,owner_qr,owner_emvco_string,owner_bgimg,
+    owner_name,owner.owner_tax_number,owner_vat,
+    owner_vat_status,owner_address,
+    owner.tel,add_time,end_time,
+    header_slip,
+    footer_slip,
+    header_a4,
+    footer_a4,
+    befor_runno,
+    runno_digit,
+    reset_runno,
+    logoonslip,
+    youtube_url_forcus')
+    ->from('owner')
+    ->where('store_id', $store_id)
+    ->order_by('owner_id', 'DESC');
+    
+    $query = $this->db->get();
+    $encode_data = json_encode($query->result(), JSON_UNESCAPED_UNICODE);
+    return $encode_data;
+}
 
 
 

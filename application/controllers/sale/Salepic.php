@@ -1,6 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
-
+use Endroid\QrCode\QrCode;
+use Endroid\QrCode\Writer\PngWriter;
 class Salepic extends MY_Controller {
 
 
@@ -489,6 +490,10 @@ if(!isset($_POST['addshiftmoneystart'])){
 	//header( "location: ".$_SERVER['HTTP_REFERER']."" );
 
     	}
+
+
+
+       
 
        
 

@@ -325,7 +325,7 @@
 
     <!-- change QR payment -->
     <!-- QR Upload Modal -->
-    <!-- Place this outside your table and ng-repeat -->
+
     <div class="modal fade" id="updateqrmodal" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -334,22 +334,16 @@
                     <h4 class="modal-title">Upload QR</h4>
                 </div>
                 <div class="modal-body">
-                    <form id="uploadQrImg" enctype="multipart/form-data">
-                        <!-- File input for the QR code -->
-                        <div class="form-group">
-                            <label>Upload QR Code Image</label>
-                            <input type="file" name="owner_qr" class="form-control" accept="image/*" required>
+                    <form id="uploadQrImg">
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label>Upload QR Code Image</label>
+                                <input type="file" name="owner_qr" class="form-control" required>
+                            </div>
                         </div>
-
-                        <!-- Submit Button 1: Normal Upload Only -->
-                        <button type="submit" class="btn btn-default submit-btn" data-url="Brand/Addqr">
-                            Save Image Only
-                        </button>
-
-                        <!-- Submit Button 2: Upload AND Extract EMVCo String -->
-                        <button type="submit" class="btn btn-primary submit-btn" data-url="Brand/Addqr_with_emvco">
-                            Save EMVCo (Upload & Extract)
-                        </button>
+                        <div class="modal-footer">
+                            <button type="submit" class="submit-btn btn btn-primary">Save QR Code</button>
+                        </div>
                     </form>
                 </div>
             </div>
@@ -771,6 +765,64 @@ app.controller('Index', function($scope, $http, $location) {
 
 
     // Keep your modal open function as it is
+    // $scope.Updateqrmodal = function(x) {
+    //     $scope.owner_id_qr = x.owner_id;
+    //     console.log("Opening QR modal for owner_id:", x.owner_id);
+    //     $('#updateqrmodal').modal('show');
+    // };
+
+    // $(document).ready(function() {
+
+    //     var targetActionUrl = "<?php echo base_url('storemanager/brand/addqr_with_emvco'); ?>";
+
+    //     $('#uploadQrImg').on('submit', function(e) {
+    //         e.preventDefault();
+
+    //         var formData = new FormData(this);
+    //         formData.set("owner_id", $scope.owner_id_qr);
+
+    //         console.log("Submitting form data to URL:", targetActionUrl);
+
+    //         $.ajax({
+    //             type: 'POST',
+    //             url: targetActionUrl,
+    //             data: formData,
+    //             cache: false,
+    //             contentType: false,
+    //             processData: false,
+    //             dataType: 'json',
+    //             success: function(data) {
+    //                 console.log("Upload success:", data);
+
+    //                 if (data.status === 'success') {
+    //                     // Dynamically update the QR image preview using PHP base_url inline
+    //                     $('#ownerQrPreview').attr('src',
+    //                         "<?php echo base_url(); ?>" + data.path);
+    //                 }
+
+    //                 $("#uploadQrImg")[0].reset();
+
+    //                 var scope = angular.element($('#uploadQrImg')).scope();
+    //                 if (scope) {
+    //                     scope.$apply(function() {
+    //                         if (typeof scope.get === 'function') {
+    //                             scope.get(); // Refresh table view data
+    //                         }
+    //                     });
+    //                 }
+
+    //                 // Blur and hide modal safely
+    //                 $('#updateqrmodal').find(':focus').blur();
+    //                 $('#updateqrmodal').modal('hide');
+    //             },
+    //             error: function(xhr, status, error) {
+    //                 console.error("Upload error:", status, error, xhr.responseText);
+    //             }
+    //         });
+    //     });
+    // });
+
+
     $scope.Updateqrmodal = function(x) {
         $scope.owner_id_qr = x.owner_id;
         console.log("Opening QR modal for owner_id:", x.owner_id);
@@ -778,12 +830,8 @@ app.controller('Index', function($scope, $http, $location) {
     };
 
     $(document).ready(function() {
-        var targetActionUrl = 'Brand/Addqr'; // Default fallback
 
-        // Capture which submit button was clicked
-        $('#uploadQrImg').on('click', '.submit-btn', function(e) {
-            targetActionUrl = $(this).attr('data-url') || 'Brand/Addqr';
-        });
+        var targetActionUrl = "<?php echo base_url('storemanager/brand/addqr_with_emvco'); ?>";
 
         $('#uploadQrImg').on('submit', function(e) {
             e.preventDefault();
@@ -800,8 +848,23 @@ app.controller('Index', function($scope, $http, $location) {
                 cache: false,
                 contentType: false,
                 processData: false,
+                dataType: 'json',
                 success: function(data) {
                     console.log("Upload success:", data);
+
+                    if (data.status === 'success') {
+                        // Dynamically update the QR image preview using PHP base_url inline
+                        $('#ownerQrPreview').attr('src',
+                            "<?php echo base_url(); ?>" + data.path);
+
+                        // Toastr success notification using your language variable
+                        toastr.success(
+                            '<?php echo isset($lang_success) ? $lang_success : "Successfully saved"; ?>'
+                        );
+                    } else {
+                        toastr.error(data.message || 'Could not save data.');
+                    }
+
                     $("#uploadQrImg")[0].reset();
 
                     var scope = angular.element($('#uploadQrImg')).scope();
@@ -813,21 +876,17 @@ app.controller('Index', function($scope, $http, $location) {
                         });
                     }
 
-                    // Blur any focused buttons inside the modal to prevent aria-hidden focus warnings
+                    // Blur and hide modal safely
                     $('#updateqrmodal').find(':focus').blur();
-
-                    // Hide the modal
                     $('#updateqrmodal').modal('hide');
                 },
                 error: function(xhr, status, error) {
                     console.error("Upload error:", status, error, xhr.responseText);
+                    toastr.error('Failed to connect to server.');
                 }
             });
         });
     });
-
-
-
 
 
 
