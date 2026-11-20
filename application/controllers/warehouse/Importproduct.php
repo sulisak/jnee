@@ -139,6 +139,10 @@ echo  $this->importproduct_model->Get($data);
   if(!isset($data)){
   exit();
   }
+  $this->output
+        ->set_content_type('application/json', 'utf-8')
+        ->set_header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0')
+        ->set_header('Pragma: no-cache');
 
   echo  $this->importproduct_model->Getdateend($data);
 

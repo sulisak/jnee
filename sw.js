@@ -28,6 +28,8 @@ self.addEventListener('activate', (event) => {
 
 // 3. Fetch Event: Safely handle requests without crashing on POST or cache misses
 self.addEventListener('fetch', (event) => {
+    const url = new URL(event.request.url);
+
     // Skip non-GET requests (like POST AJAX uploads)
     if (event.request.method !== 'GET') {
         return;
@@ -35,6 +37,11 @@ self.addEventListener('fetch', (event) => {
 
     // Skip navigation requests (standard page loads like /brand) so Apache handles them directly
     if (event.request.mode === 'navigate') {
+        return;
+    }
+
+    // Skip dynamic backend/API paths (like product value or stock endpoints) so they bypass the service worker
+    if (url.pathname.includes('/product_value/') || url.pathname.includes('/sale/') || url.pathname.includes('/api/')) {
         return;
     }
 

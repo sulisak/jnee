@@ -12,6 +12,9 @@ public function __construct()
         $this->load->database();
         $this->load->model('home_model');
 		// $this->load->model('product_value_model'); // <-- ໂຫຼດເພີ່ມບ່ອນນີ້
+
+     
+     
 		
     }
 
@@ -100,6 +103,12 @@ header("Location: ".$_SERVER['HTTP_REFERER']."");
 
 
 	}
+
+
+    public function Productdateend()
+    {
+        echo $this->home_model->Productdateend();
+    }
 
 
   function Saletoday()
@@ -225,12 +234,7 @@ echo $this->home_model->Productoutofstock();
 
 
 
-function Productdateend()
-{
 
-echo $this->home_model->Productdateend();
-
-}
 
 
 function Productpawnenddate()
@@ -414,6 +418,8 @@ public function get_dynamic_qr_ajax()
     }
 // update QR upload and EMVCo string ======================
 // update QR code to return both owner_qr and owner_emvco_string 
+
+
 
 
 
