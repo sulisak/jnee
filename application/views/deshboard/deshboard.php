@@ -265,7 +265,7 @@ body {
 
 
 
-
+            <!-- product date end  -->
             <div class="col-md-6">
                 <a style="text-decoration:none;" href="<?php echo $base_url;?>/warehouse/dateend"
                     title="<?=$lang_clickthisalllist?>">
@@ -301,7 +301,66 @@ body {
             </div>
 
 
-            <!-- ===================== -->
+            <!-- ===== product date end  ==============-->
+
+            <!-- ===== 2-MONTH EXPIRATION POPUP MODAL ============== -->
+            <div class="modal fade" id="Product_date_end_noti_modal" tabindex="-1" role="dialog"
+                aria-labelledby="expiryModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true"
+                                ng-click="closeExpiryModal()">&times;</button>
+                            <h4 class="modal-title" id="expiryModalLabel">
+                                ແຈ້ງເຕືອນ ສິນຄ້າໃກ້ໝົດອາຍຸ (ພາຍໃນ 2 ເດືອນ)
+                            </h4>
+                        </div>
+                        <div class="modal-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover table-bordered">
+                                    <thead>
+                                        <tr class="trheader">
+                                            <th class="text-center">ລຳດັບ</th>
+                                            <th class="text-center">ລະຫັດສິນຄ້າບາໂຄ້ດ</th>
+                                            <th class="text-center">ຊື່ສິນຄ້າ</th>
+                                            <th class="text-center">ຈຳນວນ</th>
+                                            <th class="text-center">Lot.No</th>
+                                            <th class="text-center">ວັນໝົດອາຍຸ</th>
+                                            <th class="text-center">No.Import</th>
+                                            <th class="text-center">ຍັງເຫຼືອ</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr ng-repeat="x in nearExpiryList">
+                                            <td class="text-center">{{ $index + 1 }}</td>
+                                            <td class="text-center">{{ x.product_code }}</td>
+                                            <td>{{ x.product_name }}</td>
+                                            <td class="text-right">{{ x.importproduct_detail_num | number }}</td>
+                                            <td class="text-center">{{ x.lotno }}</td>
+                                            <td class="text-center">{{ x.date_end }}</td>
+                                            <td class="text-center">{{ x.importproduct_header_code }}</td>
+                                            <td class="text-center">{{ x.days_left }} days</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <center>
+                                <a href="<?php echo rtrim($base_url, '/'); ?>/warehouse/dateend"
+                                    class="btn btn-primary btn-lg">
+                                    <?=$lang_clickthisalllist?>
+                                </a>
+                                <button type="button" class="btn btn-danger btn-lg" data-dismiss="modal"
+                                    aria-hidden="true" ng-click="closeExpiryModal()">
+                                    close
+                                </button>
+                            </center>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- ===== END POPUP MODAL ============== -->
 
 
 
@@ -643,109 +702,113 @@ Backup Database
 
 
 
+        <!-- close this alert product less first -->
+
+        <!-- <div class="modal fade" id="Product_num_min_noti_modal">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
 
 
-        <!-- div class="modal fade" id="Product_num_min_noti_modal">
-	<div class="modal-dialog modal-lg">
-		<div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h1 class="modal-title" style="color:red;"><b>ແຈ້ງເຕືອນ ສິນຄ້າເຫຼືອນ້ອຍ</b></h1>
+                        <a href="<?php echo $base_url;?>/warehouse/stock/Remove_num_min_noti_modal"
+                            class="btn btn-default">
+                            <?php echo $lang_db_27;?></a>
+                    </div>
 
 
-<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-				<h1 class="modal-title" style="color:red;"><b><?php echo $lang_db_26;?></b></h1>
-				<a href="<?php echo $base_url;?>/warehouse/stock/Remove_num_min_noti_modal" class="btn btn-default">
-			<?php echo $lang_db_27;?></a>
-			</div>
-			
-			
-			<div class="modal-body">
-
-	
-	
-<table id="headerTable" class="table table-hover table-bordered">
-	<thead style="font-size:14px;">
-		<tr class="trheader">
-		<th style="width: 50px;"><?=$lang_rank?></th>
-		<th style="text-align: center;"><?=$lang_barcode?></th>
-			<th style="text-align: center;"><?=$lang_productname?></th>
-			<th style="text-align: center;"><?=$lang_category?></th>
-<th style="text-align: center;">Zone</th>
-
-			<th style="text-align: center;"><?=$lang_total?></th>
-			<th style="text-align: center;"><?=$lang_unit?></th>
-			<th style="text-align: center;"><?php echo $lang_db_28;?></th>
-			<th style="text-align: center;"><?php echo $lang_db_29;?></th>
-
-		</tr>
-	</thead>
-	<tbody>
-
-
-		<tr ng-repeat="x in product_num_min_noti_list">
-			<td class="text-center">{{($index+1)}}</td>
-			
-			<td align="center">
-				{{x.product_code}}</td>
-				
-			<td>{{x.product_name}}</td>
-
-<td>{{x.product_category_name}}</td>
-	<td>{{x.zone_name}}</td>
-	
-		<td align="right">{{x.product_stock_num | number}}</td>
-			
-			
-			<td align="right">{{x.product_unit_name}}</td>
-			
-			
-			
-		
-		<td align="right">
-		<span ng-if="x.product_num_min=='0'"><?php echo $_SESSION['stock_noti'];?></span>
-		<span ng-if="x.product_num_min>'0'">
-		{{x.product_num_min}}</span>
-		
-		
-		</td>
-
-		
-		
-		
-		<td align="right">
-		<span ng-if="x.product_num_min=='0'">{{x.numdiff2}}</span>
-		<span ng-if="x.product_num_min>'0'">{{x.numdiff}}</span>
-		
-		</td>
-
-		</tr>
-		
-	
-		
-		
-	
-
-	</tbody>
-</table>
-<hr />
-<button id="btnExport" class="btn btn-default" onclick="fnExcelReport();"> <span class="glyphicon glyphicon-save" aria-hidden="true"></span>
-<?=$lang_downloadexcel?> </button>
+                    <div class="modal-body">
 
 
 
-			</div>
-			<div class="modal-footer">
+                        <table id="headerTable" class="table table-hover table-bordered">
+                            <thead style="font-size:14px;">
+                                <tr class="trheader">
+                                    <th style="width: 50px;"><?=$lang_rank?></th>
+                                    <th style="text-align: center;"><?=$lang_barcode?></th>
+                                    <th style="text-align: center;"><?=$lang_productname?></th>
+                                    <th style="text-align: center;"><?=$lang_category?></th>
+                                    <th style="text-align: center;">Zone</th>
 
-				<center>
-			<button type="button" class="btn btn-danger btn-lg" data-dismiss="modal" aria-hidden="true">close</button>
-</center>
+                                    <th style="text-align: center;"><?=$lang_total?></th>
+                                    <th style="text-align: center;"><?=$lang_unit?></th>
+                                    <th style="text-align: center;"><?php echo $lang_db_28;?></th>
+                                    <th style="text-align: center;"><?php echo $lang_db_29;?></th>
 
-			</div>
-		</div>
-	</div>
-</div>
- -->
+                                </tr>
+                            </thead>
+                            <tbody>
 
 
+                                <tr ng-repeat="x in product_num_min_noti_list">
+                                    <td class="text-center">{{($index+1)}}</td>
+
+                                    <td align="center">
+                                        {{x.product_code}}</td>
+
+                                    <td>{{x.product_name}}</td>
+
+                                    <td>{{x.product_category_name}}</td>
+                                    <td>{{x.zone_name}}</td>
+
+                                    <td align="right">{{x.product_stock_num | number}}</td>
+
+
+                                    <td align="right">{{x.product_unit_name}}</td>
+
+
+
+
+                                    <td align="right">
+                                        <span
+                                            ng-if="x.product_num_min=='0'"><?php echo $_SESSION['stock_noti'];?></span>
+                                        <span ng-if="x.product_num_min>'0'">
+                                            {{x.product_num_min}}</span>
+
+
+                                    </td>
+
+
+
+
+                                    <td align="right">
+                                        <span ng-if="x.product_num_min=='0'">{{x.numdiff2}}</span>
+                                        <span ng-if="x.product_num_min>'0'">{{x.numdiff}}</span>
+
+                                    </td>
+
+                                </tr>
+
+
+
+
+
+
+                            </tbody>
+                        </table>
+                        <hr />
+                        <button id="btnExport" class="btn btn-default" onclick="fnExcelReport();"> <span
+                                class="glyphicon glyphicon-save" aria-hidden="true"></span>
+                            <?=$lang_downloadexcel?> </button>
+
+
+
+                    </div>
+                    <div class="modal-footer">
+
+                        <center>
+                            <button type="button" class="btn btn-danger btn-lg" data-dismiss="modal"
+                                aria-hidden="true">close</button>
+                        </center>
+
+                    </div>
+                </div>
+            </div>
+        </div> -->
+
+
+        <!-- close this alert product less first -->
 
 
 
@@ -1049,7 +1112,7 @@ Backup Database
 
 <script>
 var app = angular.module('firstapp', []);
-app.controller('Index', function($scope, $http, $location) {
+app.controller('Index', function($scope, $http, $location, $timeout) {
 
 
 
@@ -1161,81 +1224,6 @@ app.controller('Index', function($scope, $http, $location) {
 
     $scope.Productoutofstock();
     // =============================================
-    // $scope.Productstockless = function() {
-
-    //     $http.get('Warehouse/Stockless/Getstockless')
-    //         .then(function(response) {
-    //             console.log("Productstockless response:", response.data); // debug
-    //             $scope.productstockless = response.data;
-
-    //         });
-    // };
-
-    // $scope.Productstockless();
-
-    // ---------------------------------------------------
-
-    // $http.get('Warehouse/Stockless/Getstockless')
-    //     .then(function(response) {
-    //         console.log("Productstockless response:", response.data);
-    //         $scope.productstockless = response.data.list || [];
-
-    //         // Log each product
-    //         $scope.productstockless.forEach(function(x) {
-    //             console.log(x.product_name, x.product_stock_num);
-    //         });
-    //     });
-
-
-    // $scope.Productstockless = function() {
-    //     $http.get('Warehouse/Stockless/Getstockless')
-    //         .then(function(response) {
-    //             console.log("Productstockless response:", response.data);
-
-    //             // Normalize data and make sure stock is a number
-    //             $scope.productstockless = (response.data.list || []).map(function(item) {
-    //                 item.product_stock_num = parseInt(item.product_stock_num, 10) || 0;
-    //                 return item;
-    //             });
-
-    //             // Debug each product row
-    //             $scope.productstockless.forEach(function(x, i) {
-    //                 console.log(i + 1, x.product_name, x.product_stock_num);
-    //             });
-    //         })
-    //         .catch(function(error) {
-    //             console.error("Error loading Productstockless:", error);
-    //         });
-    // };
-
-    // // Run on page load
-    // $scope.Productstockless();
-
-
-    // ---------------------------------
-
-    //   $scope.Saletoday = function() {
-
-    //     $http.get('Home/Saletoday')
-    //         .then(function(response) {
-    //             $scope.saletoday = response.data;
-
-    //         });
-    // };
-    // $scope.Saletoday();
-
-
-    $scope.get_product_value = function() {
-        $http.get('Home/Getstock', {}) // send empty object if no filters
-            .then(function(response) {
-                console.log("Getstock response:", response.data); // debug
-                $scope.product_value_list = response.data;
-            });
-    };
-    $scope.get_product_value();
-
-
-
 
 
     // ==============================================
@@ -1330,6 +1318,105 @@ app.controller('Index', function($scope, $http, $location) {
 
 
 
+    // NEW: 2-Month Product Expiration Alert & Popup
+
+    var TWO_MONTHS_SECONDS = 60 * 24 * 60 * 60; // 60 days in seconds
+
+    $scope.nearExpiryList = [];
+    $scope.showExpiryModal = false;
+
+    $scope.getDaysLeft = function(dateEnd2) {
+        var endSec = Number(dateEnd2);
+        if (!endSec) return 0;
+        var nowSec = Math.floor(Date.now() / 1000);
+        return Math.max(0, Math.ceil((endSec - nowSec) / 86400));
+    };
+
+    $scope.isWithinTwoMonths = function(item) {
+        if (!item || !item.date_end2) return false;
+        var nowSec = Math.floor(Date.now() / 1000);
+        var endSec = Number(item.date_end2);
+        if (!endSec) return false;
+        return endSec > nowSec && (endSec - nowSec) <= TWO_MONTHS_SECONDS;
+    };
+
+    $scope.openExpiryModal = function() {
+        $scope.showExpiryModal = true;
+        var $ = window.jQuery || window.$;
+        var modalEl = document.getElementById('Product_date_end_noti_modal');
+
+        if (!modalEl) {
+            console.warn('[ExpiryModal] #Product_date_end_noti_modal not found in DOM');
+            return;
+        }
+
+        if ($ && typeof $.fn.modal === 'function') {
+            $(modalEl).modal({
+                backdrop: 'static',
+                keyboard: true,
+                show: true
+            });
+        } else {
+            console.warn('[ExpiryModal] Bootstrap jQuery modal plugin not available; using fallback');
+            modalEl.style.display = 'block';
+            modalEl.className += ' in show';
+        }
+    };
+
+    $scope.closeExpiryModal = function() {
+        $scope.showExpiryModal = false;
+        var $ = window.jQuery || window.$;
+        var modalEl = document.getElementById('Product_date_end_noti_modal');
+
+        if (!modalEl) return;
+
+        if ($ && typeof $.fn.modal === 'function') {
+            $(modalEl).modal('hide');
+        } else {
+            modalEl.style.display = 'none';
+            modalEl.className = modalEl.className.replace(/\b(in|show)\b/g, '').trim();
+        }
+    };
+
+    $scope.CheckNearExpiry = function() {
+        var baseUrl = '<?php echo rtrim($base_url, '/'); ?>/warehouse/dateend/NearExpiry';
+        var url = baseUrl + '?_=' + Date.now();
+
+        $http.get(url, {
+                cache: false
+            })
+            .then(function(response) {
+                console.log('[ExpiryModal] Raw response.data:', response.data);
+
+                var items = Array.isArray(response.data) ? response.data : [];
+                $scope.nearExpiryList = items.filter($scope.isWithinTwoMonths).map(function(item) {
+                    item.days_left = $scope.getDaysLeft(item.date_end2);
+                    return item;
+                });
+
+                console.log('[ExpiryModal] Filtered count:', $scope.nearExpiryList.length);
+
+                if ($scope.nearExpiryList.length > 0) {
+                    var scheduleOpen = (typeof $timeout === 'function') ?
+                        function(fn, delay) {
+                            $timeout(fn, delay);
+                        } :
+                        function(fn, delay) {
+                            setTimeout(function() {
+                                $scope.$apply(fn);
+                            }, delay);
+                        };
+
+                    scheduleOpen(function() {
+                        $scope.openExpiryModal();
+                    }, 300);
+                }
+            }, function(error) {
+                console.error('[ExpiryModal] CheckNearExpiry error:', error);
+            });
+    };
+
+    $scope.CheckNearExpiry();
 
 });
 </script>
