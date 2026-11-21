@@ -897,12 +897,6 @@ $this->db->query('UPDATE sale_list_header
 
 
 
-
-
-
-
-
-
 public function Getproductformat($data)
         {
 
@@ -1316,21 +1310,6 @@ return $json;
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         public function Getquotation($data)
                 {
 
@@ -1434,15 +1413,7 @@ if($num_rows == 1){
           return $encode_data;
 
 
-
-
-
-
           }
-
-
-
-
 
 
 
@@ -1533,12 +1504,6 @@ return $encode_data2;
 			
 			
 			
-			
-			
-			
-			
-			
-			
 			      public function Updateproductprice($data)
                   {
 
@@ -1573,10 +1538,6 @@ return $encode_data2;
             }
 			
 			
-
-
-
-
 
             public function Price_discount_percent($data)
                     {
