@@ -185,7 +185,7 @@ public function GetNearExpiry()
 
     $sql = "SELECT
                 ipd.importproduct_detail_id,
-                ipd.	importproduct_detail_id,
+                ipd.importproduct_detail_id,
                 ipd.product_id,
                 wl.product_code,
                 wl.product_name,
@@ -198,7 +198,7 @@ public function GetNearExpiry()
                 IFNULL(b.branch_name, '') AS branch_name
             FROM wh_importproduct_detail AS ipd
             LEFT JOIN wh_importproduct_header AS iph
-                ON iph.importproduct_header_id = ipd.	importproduct_detail_id
+                ON iph.importproduct_header_id = ipd.importproduct_detail_id
             LEFT JOIN wh_product_list AS wl
                 ON wl.product_id = ipd.product_id
             LEFT JOIN branch AS b
@@ -226,6 +226,4 @@ public function GetNearExpiry()
 }
 
 
-
-
-    }
+}
