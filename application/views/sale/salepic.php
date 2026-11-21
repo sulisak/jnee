@@ -427,7 +427,7 @@ else {
 
 
 
-                                <div class="form-group">
+                                <!-- <div class="form-group">
                                     <select class="form-control" ng-model="sale_type"
                                         style="background-color:orange;color:#fff;">
                                         <option value="1">{{name_of_price_list[0].price1}}</option>
@@ -440,8 +440,26 @@ else {
                                         <option value="5" ng-if="name_of_price_list[0].price5">
                                             {{name_of_price_list[0].price5}}</option>
                                     </select>
-                                </div>
+                                </div> -->
 
+                                <!-- update select sale_type option -->
+                                <div class="form-group">
+                                    <select class="form-control" ng-model="sale_type"
+                                        ng-change="onSaleTypeUserChange(sale_type)"
+                                        style="background-color:orange;color:#fff;font-family:'Phetsarath OT';font-weight:bold;"
+                                        autocomplete="off">
+                                        <option value="1">{{name_of_price_list[0].price1}}</option>
+                                        <option value="2" ng-show="name_of_price_list[0].price2">
+                                            {{name_of_price_list[0].price2}}</option>
+                                        <option value="3" ng-show="name_of_price_list[0].price3">
+                                            {{name_of_price_list[0].price3}}</option>
+                                        <option value="4" ng-show="name_of_price_list[0].price4">
+                                            {{name_of_price_list[0].price4}}</option>
+                                        <option value="5" ng-show="name_of_price_list[0].price5">
+                                            {{name_of_price_list[0].price5}}</option>
+                                    </select>
+                                </div>
+                                <!-- update select sale_type option -->
 
 
 
@@ -1587,7 +1605,7 @@ if($_SESSION['owner_vat_status']=='2'){
                                                 style="height:100px;font-size: 30px;font-weight: bold;"
                                                 ng-click="printDivmini(x,sale_type)"><?=$lang_billmini?>(Slip)</button>
 
-                                            <button ng-show="printer_ul !='0'" class="btn btn-primary btn-lg"
+                                            <!-- <button ng-show="printer_ul !='0'" class="btn btn-primary btn-lg"
                                                 style="height:100px;font-size: 30px;font-weight: bold;"
                                                 ng-click="printDivminiip(x,sale_type)"><?=$lang_billmini?>(Slip)</button>
 
@@ -1595,6 +1613,30 @@ if($_SESSION['owner_vat_status']=='2'){
 
                                             <button class="btn btn-primary btn-lg" ng-click="printDivfull(x,sale_type)"
                                                 style="height:100px; font-size: 30px; font-weight: bold;">
+                                                <?=$lang_billfull?>(A4)
+                                            </button> -->
+
+                                            <!-- <button ng-show="printer_ul !='0'" class="btn btn-primary btn-lg"
+                                                style="height:100px;font-size: 30px;font-weight: bold;font-family:'Phetsarath OT';"
+                                                ng-click="printDivminiip(x, x.sale_type || sale_type)">
+                                                <?=$lang_billmini?>(Slip)
+                                            </button>
+
+                                            <button class="btn btn-primary btn-lg"
+                                                ng-click="printDivfull(x, x.sale_type || sale_type)"
+                                                style="height:100px; font-size: 30px; font-weight: bold;font-family:'Phetsarath OT';">
+                                                <?=$lang_billfull?>(A4)
+                                            </button> -->
+
+
+                                            <button ng-show="printer_ul !='0'" class="btn btn-primary btn-lg"
+                                                style="height:100px;font-size:30px;font-weight:bold;font-family:'Phetsarath OT';"
+                                                ng-click="printDivminiip(x, sale_type)">
+                                                <?=$lang_billmini?>(Slip)
+                                            </button>
+
+                                            <button class="btn btn-primary btn-lg" ng-click="printDivfull(x, sale_type)"
+                                                style="height:100px;font-size:30px;font-weight:bold;font-family:'Phetsarath OT';">
                                                 <?=$lang_billfull?>(A4)
                                             </button>
 
@@ -5773,6 +5815,73 @@ if($_SESSION['owner_vat_status']=='0' || $_SESSION['owner_vat_status']=='1'){
 
                                     // update 12102026 ----------------
 
+                                    function getFallbackSaleType(item, argSaleType, scopeSaleType) {
+                                        if (item && item.sale_type !== undefined && item.sale_type !== null &&
+                                            String(item.sale_type).trim() !== '') {
+                                            return String(item.sale_type).trim();
+                                        }
+                                        if (argSaleType !== undefined && argSaleType !== null && String(
+                                                argSaleType).trim() !== '') {
+                                            return String(argSaleType).trim();
+                                        }
+                                        if (scopeSaleType !== undefined && scopeSaleType !== null && String(
+                                                scopeSaleType).trim() !== '') {
+                                            return String(scopeSaleType).trim();
+                                        }
+                                        return '1';
+                                    }
+
+                                    function openBillWithDbSaleType(item, argSaleType, targetModalId,
+                                        hideModalId) {
+                                        var fallbackSaleType = getFallbackSaleType(item, argSaleType, $scope
+                                            .sale_type);
+
+                                        if (hideModalId) {
+                                            $(hideModalId).modal('hide');
+                                        }
+                                        if (targetModalId) {
+                                            $(targetModalId).modal('show');
+                                        }
+
+                                        if (!item || !item.sale_runno) {
+                                            if (item) {
+                                                $scope.Getone(item, fallbackSaleType);
+                                            }
+                                            return;
+                                        }
+
+                                        var url =
+                                            '<?php echo rtrim($base_url, '/'); ?>/sale/salepage/GetSaleTypeByRunno';
+
+                                        $http.get(url, {
+                                            params: {
+                                                sale_runno: item.sale_runno,
+                                                _: Date.now()
+                                            },
+                                            cache: false
+                                        }).then(function(response) {
+                                            var dbSaleType = (response.data && response.data
+                                                    .sale_type !== undefined && response.data
+                                                    .sale_type !== null && String(response.data
+                                                        .sale_type).trim() !== '') ?
+                                                String(response.data.sale_type).trim() :
+                                                fallbackSaleType;
+
+                                            item.sale_type = dbSaleType;
+                                            $scope.Getone(item, dbSaleType);
+                                        }, function() {
+                                            $scope.Getone(item, fallbackSaleType);
+                                        });
+                                    }
+
+                                    $scope.printDivfull = function(x, sale_type) {
+                                        var selectedItem = x || ($scope.list && $scope.list.length > 0 ?
+                                            $scope.list[0] : null);
+                                        openBillWithDbSaleType(selectedItem, sale_type, '#Openone',
+                                            '#Openonemini');
+                                    };
+
+
                                     $scope.printDivminiip = function(sale_type) {
                                         var activeSaleType = sale_type || $scope.sale_type;
                                         $('#Openoneminiip').modal('show');
@@ -5784,19 +5893,75 @@ if($_SESSION['owner_vat_status']=='0' || $_SESSION['owner_vat_status']=='1'){
 
                                     };
 
+
+
+                                    // update printDivfull --------------------
                                     $scope.printDivfull = function(x, sale_type) {
-                                        var activeSaleType = sale_type || $scope.sale_type || localStorage
-                                            .getItem('saved_sale_type') || '1';
                                         var selectedItem = x || ($scope.list && $scope.list.length > 0 ?
                                             $scope.list[0] : null);
+                                        if (!selectedItem) return;
 
-                                        if (selectedItem) {
-                                            $scope.Getone(selectedItem, activeSaleType);
-                                        }
+                                        var hasItemSaleType = (selectedItem.sale_type !== undefined &&
+                                            selectedItem.sale_type !== null && String(selectedItem
+                                                .sale_type).trim() !== '');
+                                        var hasArgSaleType = (sale_type !== undefined && sale_type !==
+                                            null && String(sale_type).trim() !== '');
+                                        var hasScopeType = ($scope.sale_type !== undefined && $scope
+                                            .sale_type !== null && String($scope.sale_type).trim() !==
+                                            '');
+
+                                        var fallbackSaleType = hasItemSaleType ?
+                                            String(selectedItem.sale_type).trim() :
+                                            (hasArgSaleType ?
+                                                String(sale_type).trim() :
+                                                (hasScopeType ? String($scope.sale_type).trim() : '1'));
 
                                         $('#Openonemini').modal('hide');
                                         $('#Openone').modal('show');
+
+                                        if (!selectedItem.sale_runno) {
+                                            selectedItem.sale_type = fallbackSaleType;
+                                            $scope.Getone(selectedItem, fallbackSaleType);
+                                            return;
+                                        }
+
+                                        var apiUrl =
+                                            '<?php echo rtrim($base_url, '/'); ?>/sale/salepage/GetSaleTypeByRunno';
+
+                                        $http.get(apiUrl, {
+                                            params: {
+                                                sale_runno: selectedItem.sale_runno,
+                                                t: Date.now()
+                                            },
+                                            cache: false
+                                        }).then(function(res) {
+                                            var hasDbType = (res.data && res.data.sale_type !==
+                                                undefined && res.data.sale_type !== null &&
+                                                String(res.data.sale_type).trim() !== '');
+                                            var resolvedSaleType = hasDbType ? String(res.data
+                                                .sale_type).trim() : fallbackSaleType;
+
+                                            selectedItem.sale_type = resolvedSaleType;
+                                            $scope.sale_type = resolvedSaleType;
+
+                                            console.log('[Print A4]', {
+                                                sale_runno: selectedItem.sale_runno,
+                                                dbSaleType: res.data ? res.data.sale_type :
+                                                    undefined,
+                                                fallbackSaleType: fallbackSaleType,
+                                                activeSaleType: resolvedSaleType
+                                            });
+
+                                            $scope.Getone(selectedItem, resolvedSaleType);
+                                        }, function(err) {
+                                            console.warn('[Print A4 GetSaleTypeByRunno failed]',
+                                                err);
+                                            selectedItem.sale_type = fallbackSaleType;
+                                            $scope.Getone(selectedItem, fallbackSaleType);
+                                        });
                                     };
+
+                                    // update printDivfull --------------------
 
 
                                     // 1. Initialize sale_type from localStorage immediately upon load
@@ -6941,11 +7106,92 @@ if($_SESSION['owner_vat_status']=='0' || $_SESSION['owner_vat_status']=='1'){
 
                                     };
 
-                                    //  savesale =========================================================================
+                                    // end savesale =========================================================================
 
+                                    // add new for handle select option sale type ----------------
+                                    var isApplyingLoadedSaleType = false;
+                                    var lockedSaleType = null;
+
+                                    function setSaleTypeFromRecord(rawType) {
+                                        var normalized = (rawType !== undefined && rawType !== null && String(
+                                                rawType).trim() !== '') ?
+                                            String(rawType).trim() :
+                                            '1';
+
+                                        isApplyingLoadedSaleType = true;
+                                        lockedSaleType = normalized;
+                                        $scope.sale_type = normalized;
+
+                                        setTimeout(function() {
+                                            $scope.$applyAsync(function() {
+                                                if (lockedSaleType !== null && $scope
+                                                    .sale_type !== lockedSaleType) {
+                                                    $scope.sale_type = lockedSaleType;
+                                                }
+                                                isApplyingLoadedSaleType = false;
+                                            });
+                                        }, 50);
+                                    }
+
+                                    $scope.onSaleTypeUserChange = function(newType) {
+                                        if (isApplyingLoadedSaleType) {
+                                            return;
+                                        }
+                                        var normalized = (newType !== undefined && newType !== null &&
+                                                String(newType).trim() !== '') ?
+                                            String(newType).trim() :
+                                            '1';
+
+                                        lockedSaleType = normalized;
+                                        $scope.sale_type = normalized;
+                                    };
+
+                                    // When starting a brand-new bill/quotation (not loading an existing one):
+                                    function resetForNewSale() {
+                                        lockedSaleType = null;
+                                        isApplyingLoadedSaleType = false;
+                                        $scope.sale_type = '1';
+                                    }
+
+
+
+                                    // add new for handle select option sale type ----------------
+
+                                    // Helper to preserve the user's selected sale_type across Savequotation()
+                                    function preserveSaleTypeDuringSave(rawSaleType) {
+                                        var chosenType = (rawSaleType !== undefined && rawSaleType !== null &&
+                                                String(rawSaleType).trim() !== '') ?
+                                            String(rawSaleType).trim() :
+                                            (lockedSaleType || '1');
+
+                                        lockedSaleType = chosenType;
+                                        isApplyingLoadedSaleType = true;
+                                        $scope.sale_type = chosenType;
+                                        localStorage.setItem('saved_sale_type', chosenType);
+
+                                        setTimeout(function() {
+                                            $scope.$applyAsync(function() {
+                                                if (lockedSaleType !== null && String($scope
+                                                        .sale_type) !== String(
+                                                        lockedSaleType)) {
+                                                    $scope.sale_type = lockedSaleType;
+                                                }
+                                                isApplyingLoadedSaleType = false;
+                                            });
+                                        }, 120);
+                                    }
+                                    // Helper to preserve the user's selected sale_type across Savequotation()
 
                                     $scope.Savequotation = function(changemoney, sumsalepricevat,
                                         discount_last) {
+                                        // add new ==========
+                                        var selectedBeforeSave = ($scope.sale_type !== undefined && $scope
+                                                .sale_type !== null && String($scope.sale_type).trim() !==
+                                                '') ?
+                                            String($scope.sale_type).trim() :
+                                            (lockedSaleType || '1');
+
+                                        // add new ==========
 
                                         if ($scope.listsale == '' || $scope.listsale[0].product_id ===
                                             null) {
@@ -7004,6 +7250,10 @@ if($_SESSION['owner_vat_status']=='0' || $_SESSION['owner_vat_status']=='1'){
                                                 $scope.getlist();
 
                                                 $scope.listsale = [];
+
+                                                // add new =============
+                                                preserveSaleTypeDuringSave(selectedBeforeSave);
+                                                // add new =============
 
 
                                             });

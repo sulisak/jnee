@@ -875,7 +875,22 @@ $query_mpr = $this->db->query('SELECT * FROM money_to_point_rule ORDER BY id DES
 $data_mpr = $query_mpr->result_array();
 
 
-$cusaddpoint = (floor(($data2['sumsale_price']-$data2['discount_last'])/$data_mpr[0]['cus_money_if'])*$data_mpr[0]['point_will']);
+// $cusaddpoint = (floor(($data2['sumsale_price']-$data2['discount_last'])/$data_mpr[0]['cus_money_if'])*$data_mpr[0]['point_will']);
+
+$cusaddpoint = 0;
+
+$sumSalePrice = isset($data2['sumsale_price']) ? (float)$data2['sumsale_price'] : 0.0;
+$discountLast = isset($data2['discount_last']) ? (float)$data2['discount_last'] : 0.0;
+$netAmount    = max(0.0, $sumSalePrice - $discountLast);
+
+if (!empty($data_mpr) && isset($data_mpr[0])) {
+    $cusMoneyIf = isset($data_mpr[0]['cus_money_if']) ? (float)$data_mpr[0]['cus_money_if'] : 0.0;
+    $pointWill  = isset($data_mpr[0]['point_will']) ? (float)$data_mpr[0]['point_will'] : 0.0;
+
+    if ($cusMoneyIf > 0 && $pointWill > 0 && $netAmount > 0) {
+        $cusaddpoint = (int)(floor($netAmount / $cusMoneyIf) * $pointWill);
+    }
+}
 
 $this->db->query('UPDATE customer_owner
     SET product_score_all=product_score_all + '.floor($cusaddpoint).'
@@ -894,8 +909,33 @@ $this->db->query('UPDATE sale_list_header
 
 }
 
+// add new for handle sale type retrieval by run number
+public function GetSaleTypeByRunno($sale_runno)
+{
+    $sale_runno = trim((string)$sale_runno);
+
+    if ($sale_runno === '') {
+        return '1';
+    }
+
+    $row = $this->db
+        ->select('sale_type')
+        ->from('sale_list_header')
+        ->where('sale_runno', $sale_runno)
+        ->order_by('ID', 'DESC')
+        ->limit(1)
+        ->get()
+        ->row();
+
+    if ($row && isset($row->sale_type) && trim((string)$row->sale_type) !== '') {
+        return trim((string)$row->sale_type);
+    }
+
+    return '1';
+}
 
 
+// add new for handle sale type retrieval by run number
 
 
 

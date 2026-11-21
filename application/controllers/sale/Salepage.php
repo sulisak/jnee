@@ -330,7 +330,40 @@ $this->session->set_userdata($newdata);
 
 	}
 
+// add new for handle sale type retrieval by run number
 
+ function GetSaleTypeByRunno()
+{
+    $sale_runno = trim((string)$this->input->get_post('sale_runno', true));
+
+    if ($sale_runno === '') {
+        $this->output
+            ->set_content_type('application/json', 'utf-8')
+            ->set_header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0')
+            ->set_output(json_encode(array(
+                'status'     => false,
+                'sale_runno' => '',
+                'sale_type'  => '1'
+            ), JSON_UNESCAPED_UNICODE));
+        return;
+    }
+
+    // Remove this line if salepage_model is already loaded in __construct()
+    $this->load->model('sale/salepage_model');
+
+    $sale_type = $this->salepage_model->GetSaleTypeByRunno($sale_runno);
+
+    $this->output
+        ->set_content_type('application/json', 'utf-8')
+        ->set_header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0')
+        ->set_header('Pragma: no-cache')
+        ->set_output(json_encode(array(
+            'status'     => true,
+            'sale_runno' => $sale_runno,
+            'sale_type'  => $sale_type
+        ), JSON_UNESCAPED_UNICODE));
+}
+// add new for handle sale type retrieval by run number
 
 
 
