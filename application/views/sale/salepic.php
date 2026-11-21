@@ -1553,34 +1553,6 @@ if($_SESSION['owner_vat_status']=='2'){
 
                                         <center>
 
-                                            <!-- <button ng-show="printer_ul =='0'" class="btn btn-primary btn-lg"
-                                                style="height:100px;font-size: 30px;font-weight: bold;"
-                                                ng-click="printDivmini()"><?=$lang_billmini?>(Slip)</button>
-
-                                            <button ng-show="printer_ul !='0'" class="btn btn-primary btn-lg"
-                                                style="height:100px;font-size: 30px;font-weight: bold;"
-                                                ng-click="printDivminiip()"><?=$lang_billmini?>(Slip)</button>
-
-
-
-
-                                            <button class="btn btn-primary btn-lg" ng-click="printDivfull(x)"
-                                                style="height:100px; font-size: 30px; font-weight: bold;">
-                                                <?=$lang_billfull?>(A4)
-                                            </button> -->
-
-                                            <!-- <button ng-show="printer_ul =='0'" class="btn btn-primary btn-lg"
-                                                style="height:100px;font-size: 30px;font-weight: bold;"
-                                                ng-click="printDivmini(sale_type)"><?=$lang_billmini?>(Slip)</button> -->
-
-
-                                            <!-- <button ng-show="printer_ul =='0'" class="btn btn-primary btn-lg"
-                                                style="height:100px;font-size: 30px;font-weight: bold;"
-                                                ng-click="printDivmini()"><?=$lang_billmini?>(Slip)</button>
-
-                                            <button ng-show="printer_ul !='0'" class="btn btn-primary btn-lg"
-                                                style="height:100px;font-size: 30px;font-weight: bold;"
-                                                ng-click="printDivminiip(sale_type)"><?=$lang_billmini?>(Slip)</button> -->
 
 
                                             <button ng-show="printer_ul =='0'" class="btn btn-primary btn-lg"
@@ -2587,18 +2559,6 @@ pregetlistcus()" class="form-control" placeholder="<?php echo $lang_sp_42;?>"
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
                 <div class="modal fade" id="getpotmodal">
                     <div class="modal-dialog">
                         <div class="modal-content">
@@ -2643,10 +2603,6 @@ pregetlistcus()" class="form-control" placeholder="<?php echo $lang_sp_42;?>"
 
 
 
-
-
-
-
                                 </center>
 
                             </div>
@@ -2656,15 +2612,6 @@ pregetlistcus()" class="form-control" placeholder="<?php echo $lang_sp_42;?>"
                         </div>
                     </div>
                 </div>
-
-
-
-
-
-
-
-
-
 
 
 
@@ -2775,18 +2722,6 @@ echo '<br /><b>{{dataprintsend.sale_runno}}</b><br />';
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
                 <div class="modal fade" id="Openshiftmodal">
                     <div class="modal-dialog modal-sm">
                         <div class="modal-content">
@@ -2856,11 +2791,6 @@ echo '<br /><b>{{dataprintsend.sale_runno}}</b><br />';
                         </div>
                     </div>
                 </div>
-
-
-
-
-
 
 
                 <div class="modal fade" id="Closeshiftnow">
@@ -3156,14 +3086,6 @@ echo ''.$lang_endmoney.' ( '.number_format($_SESSION['shift_money_end_old']).' )
                         </div>
                     </div>
                 </div>
-
-
-
-
-
-
-
-
 
 
 
@@ -4223,24 +4145,6 @@ if($_SESSION['open_number_for_cus']=='1'){
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
                 <div class="modal fade" id="Modalgetnumtoprice_noti">
                     <div class="modal-dialog">
                         <div class="modal-content">
@@ -4270,17 +4174,6 @@ if($_SESSION['open_number_for_cus']=='1'){
                         </div>
                     </div>
                 </div>
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -7812,44 +7705,7 @@ if($_SESSION['owner_vat_status']=='0' || $_SESSION['owner_vat_status']=='1'){
                                     $scope.dynamicQrImage = '';
                                     $scope.currentQRaml = 0;
 
-                                    // Function to request updated QR image from PHP controller via AJAX
 
-                                    // last one for qr dynamic with amount show in qr code
-
-                                    // $scope.updateQRCode = function(amount) {
-                                    //     if (amount === undefined || amount <= 0) return;
-
-                                    //     var container = document.getElementById('local-qrcode-container');
-                                    //     if (!container) {
-                                    //         // Container isn't in the DOM yet (modal is closed), so skip silently
-                                    //         return;
-                                    //     }
-
-                                    //     if ($scope.currentQRaml === amount && container.hasChildNodes()) {
-                                    //         return; // Already rendered for this amount
-                                    //     }
-                                    //     $scope.currentQRaml = amount;
-
-                                    //     // Clear previous QR
-                                    //     container.innerHTML = '';
-
-                                    //     var tlvPayload = generateEMVCoPayload(amount);
-                                    //     if (!tlvPayload) return;
-
-                                    //     console.log("Final Payload sent to QRCode generator:", tlvPayload);
-
-                                    //     // Render locally using qrcode.js
-                                    //     try {
-                                    //         new QRCode(container, {
-                                    //             text: tlvPayload,
-                                    //             width: 200,
-                                    //             height: 200
-                                    //         });
-                                    //         console.log("QR Code successfully rendered into container!");
-                                    //     } catch (err) {
-                                    //         console.error("QRCode library error:", err);
-                                    //     }
-                                    // };
 
 
                                     // update 13112026 for QR dynamic with amount show in qr code
@@ -8123,23 +7979,5 @@ if($_SESSION['owner_vat_status']=='0' || $_SESSION['owner_vat_status']=='1'){
                                 </script>
 
                                 <script>
-                                // function Printmodal4() {
-                                //     var divToPrint = document.getElementById('printmodal4');
 
-                                //     var html = '<html>' +
-                                //         '<head>' +
-                                //         '<link href="<?php echo $base_url;?>/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css">' +
-                                //         '</head>' +
-                                //         '<body onload="window.print(); window.close();">' +
-                                //         divToPrint.innerHTML +
-                                //         '<style> body{font-family: "Sarabun", sans-serif;}</style>' +
-                                //         '<style> .modal-only { display: none !important; } </style>' +
-                                //         '</body>' +
-                                //         '</html>';
-
-                                //     var popupWin = window.open();
-                                //     popupWin.document.open();
-                                //     popupWin.document.write(html);
-                                //     popupWin.document.close();
-                                // }
                                 </script>

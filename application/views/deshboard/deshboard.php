@@ -339,7 +339,7 @@ body {
                                             <td class="text-center">{{ x.lotno }}</td>
                                             <td class="text-center">{{ x.date_end }}</td>
                                             <td class="text-center">{{ x.importproduct_header_code }}</td>
-                                            <td class="text-center">{{ x.days_left }} days</td>
+                                            <td class="text-center">{{ x.days_left }} ວັນ</td>
                                         </tr>
                                     </tbody>
                                 </table>
